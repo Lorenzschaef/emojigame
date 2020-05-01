@@ -239,11 +239,16 @@ wss.on('connection', (ws: WebSocket) => {
 
 
         if (cmd === 'reconnect') {
+            if (playersBySocket.has(ws)) {
+                console.log('reconnect: ws already connected to a player');
+                return;
+            }
             let secret: string = parts.shift()!;
             let player: Player|undefined = playersBySecret.get(secret);
             if (player) {
                 player.active = true;
                 player.ws = ws;
+                playersBySocket.set(ws, player);
                 player.room.checkSubmissionsComplete();
                 player.room.broadCastState();
             }
@@ -431,7 +436,7 @@ setInterval(() => {
 function onWsClose(player: Player) {
     console.log('terminating connection for player ' + player.name + ' in room ' + player.room.name);
     // player.ws.terminate();
-    // playersBySocket.delete(player.ws);
+    playersBySocket.delete(player.ws);
     player.active = false;
     // player.room.checkSubmissionsComplete();
     player.room.broadCastState();

@@ -15,45 +15,78 @@
 
 <script type="text/javascript">
 
-    // Create your WebSocket.
-    var socket = new WebSocket('ws://' + window.location.host);
+    /*
+    elm app startet -> secret als flag
+    elm wartet auf verbindung
+    bei verbindung, wenn secret vorhanden, reconnect zum spiel
+        sonst startseite
+    on.focus resettet die ws verbindung. elm versucht reconnect
 
-    socket.addEventListener('open', function() {
+    bei reconnect
+        wenn spieler nicht mehr im backend vorhanden ist, fehler
+        elm wechselt zu startseite
 
-        // Start the Elm application.
-        var app = Elm.Main.init({
-            node: document.getElementById('myapp'),
-            flags: window.localStorage.getItem('secret') || Math.random().toString(),
-        });
+    bei verlassen des raumes
+        spieler wird im backend entfernt
+        elm wechselt zur startseite
+        secret wird erneuert (port kommando)
 
-        // console.log('ws connected');
 
-        // When a command goes to the `sendMessage` port, we pass the message
-        // along to the WebSocket.
-        app.ports.sendMessage.subscribe(function(message) {
-            socket.send(message);
-        });
+     */
 
-        // When a message comes into our WebSocket, we pass the message along
-        // to the `messageReceiver` port.
-        socket.addEventListener("message", function(event) {
-            app.ports.messageReceiver.send(event.data);
-        });
 
-        app.ports.saveLogin.subscribe(function(args) {
-            window.localStorage.setItem('room', args[0]);
-            window.localStorage.setItem('player', args[1]);
-        });
-
-        socket.addEventListener("close", function(event) {
-            console.log('ws closed');
-            app.ports.wsDisconnectReceiver.send(null);
-        });
-
-        // app.ports.wsConnectReceiver.send(null);
-
+    // Start the Elm application.
+    var app = Elm.Main.init({
+        node: document.getElementById('myapp'),
+        flags: window.localStorage.getItem('secret') || null,
     });
 
+    var socket;
+
+    // Create your WebSocket.
+    function connectWs() {
+        socket = new WebSocket('ws://' + window.location.host);
+
+        socket.addEventListener('open', function () {
+
+            console.log('ws connected');
+
+            // When a command goes to the `sendMessage` port, we pass the message
+            // along to the WebSocket.
+            app.ports.sendMessage.subscribe(function (message) {
+                socket.send(message);
+            });
+
+            // When a message comes into our WebSocket, we pass the message along
+            // to the `messageReceiver` port.
+            socket.addEventListener("message", function (event) {
+                app.ports.messageReceiver.send(event.data);
+            });
+
+            // app.ports.saveLogin.subscribe(function(args) {
+            //     window.localStorage.setItem('room', args[0]);
+            //     window.localStorage.setItem('player', args[1]);
+            // });
+
+            socket.addEventListener("close", function (event) {
+                console.log('ws closed');
+                app.ports.wsDisconnectReceiver.send(null);
+            });
+
+            app.ports.wsConnectReceiver.send(null);
+
+        });
+    }
+
+    window.addEventListener("focus", function() {
+        console.log('focus');
+        if (!socket || socket.readyState === socket.CLOSED) {
+            console.log('try reconnect');
+            connectWs();
+        }
+    });
+
+    connectWs();
 
     // If you want to use a JavaScript library to manage your WebSocket
     // connection, replace the code in JS with the alternate implementation.

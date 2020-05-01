@@ -10,6 +10,8 @@ import Json.Decode exposing (Decoder, andThen, bool, decodeString, dict, errorTo
 import Json.Decode.Pipeline exposing (required)
 import List.Nonempty as NE exposing (Nonempty)
 import Maybe
+import Random
+import Task
 
 
 port sendMessage : String -> Cmd msg
@@ -24,8 +26,7 @@ port saveLogin : ( String, String ) -> Cmd msg
 port wsDisconnectReceiver : (() -> msg) -> Sub msg
 
 
-
---port wsConnectReceiver : (() -> msg) -> Sub msg
+port wsConnectReceiver : (() -> msg) -> Sub msg
 
 
 main =
@@ -41,14 +42,15 @@ type alias Model =
     { page : Page
     , errorMsg : String
     , lastWsMsg : String
-    , secret : String
+    , secret : Maybe String
+    , randomVal : Maybe String
     }
 
 
 type Page
     = Lobby LobbyModel
     | Room RoomModel
-    | Disconnected DisconnectedModel
+    | Disconnected
 
 
 type alias LobbyModel =
@@ -152,14 +154,15 @@ turnDecoder =
         |> required "bestSubmissionPlayerName" (maybe string)
 
 
-init : String -> ( Model, Cmd Msg )
+init : Maybe String -> ( Model, Cmd Msg )
 init secret =
-    ( { page = Lobby initLobby
+    ( { page = Disconnected
       , errorMsg = ""
       , lastWsMsg = ""
       , secret = secret
+      , randomVal = Nothing
       }
-    , sendMessage ("reconnect " ++ secret)
+    , Random.generate GeneratedRandomSecret (Random.map String.fromInt (Random.int Random.minInt Random.maxInt))
     )
 
 
@@ -184,6 +187,7 @@ type Msg
     | KickPlayer Player
     | KickPlayerConfirm Bool
     | SkipTurn
+    | GeneratedRandomSecret String
 
 
 type FinishingVote
@@ -202,16 +206,40 @@ update msg model =
             ( onWsMsg model wsMsgJson, Cmd.none )
 
         DisconnectedWs ->
-            ( { model | page = Disconnected (makeDisconnectedModel model) }, Cmd.none )
+            ( { model | page = Disconnected }, Cmd.none )
 
         ConnectedWs ->
+            case model.secret of
+                Nothing ->
+                    ( { model | page = Lobby initLobby }, Cmd.none )
+
+                Just secret ->
+                    ( model, sendMessage ("reconnect " ++ secret) )
+
+        GeneratedRandomSecret randomVal ->
+            ( { model | randomVal = Just randomVal }, Cmd.none )
+
+        UpdateLobbyPlayerName name ->
+            ifInLobby model (\lobbyModel -> ( { lobbyModel | playerName = name }, Cmd.none ))
+
+        UpdateLobbyRoomName name ->
+            ifInLobby model (\lobbyModel -> ( { lobbyModel | roomName = name }, Cmd.none ))
+
+        JoinRoom ->
             case model.page of
-                Disconnected discModel ->
-                    if discModel.roomName /= "" && discModel.playerName /= "" then
-                        ( model, sendMessage ("join " ++ discModel.roomName ++ " " ++ discModel.playerName) )
+                Lobby lobbyModel ->
+                    if (String.length lobbyModel.roomName == 0) || (String.length lobbyModel.playerName == 0) then
+                        ( model, Cmd.none )
 
                     else
-                        ( { model | page = Lobby initLobby }, Cmd.none )
+                        case model.randomVal of
+                            Just randomVal ->
+                                ( { model | secret = Just randomVal }
+                                , sendMessage <| "join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " " ++ randomVal
+                                )
+
+                            Nothing ->
+                                ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
@@ -236,21 +264,18 @@ update msg model =
                     ( model, Cmd.none )
 
 
-makeDisconnectedModel : Model -> DisconnectedModel
-makeDisconnectedModel model =
+ifInLobby : Model -> (LobbyModel -> ( LobbyModel, Cmd msg )) -> ( Model, Cmd msg )
+ifInLobby model func =
     case model.page of
         Lobby lobbyModel ->
-            { roomName = lobbyModel.roomName
-            , playerName = lobbyModel.playerName
-            }
+            let
+                ( newLobbyModel, cmd ) =
+                    func lobbyModel
+            in
+            ( { model | page = Lobby newLobbyModel }, cmd )
 
-        Room roomModel ->
-            { roomName = roomModel.roomName
-            , playerName = roomModel.playerName
-            }
-
-        Disconnected x ->
-            x
+        _ ->
+            ( { model | errorMsg = "Error" }, Cmd.none )
 
 
 updateRoom : Msg -> RoomModel -> ( RoomModel, Cmd Msg )
@@ -348,24 +373,11 @@ isEmoji char =
 updateLobby : Msg -> LobbyModel -> ( LobbyModel, Cmd Msg )
 updateLobby msg lobbyModel =
     case msg of
-        UpdateLobbyPlayerName name ->
-            ( { lobbyModel | playerName = name }, Cmd.none )
-
-        UpdateLobbyRoomName name ->
-            ( { lobbyModel | roomName = name }, Cmd.none )
-
-        JoinRoom ->
-            if (String.length lobbyModel.roomName == 0) || (String.length lobbyModel.playerName == 0) then
-                ( lobbyModel, Cmd.none )
-
-            else
-                ( lobbyModel
-                , Cmd.batch
-                    [ sendMessage ("join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName)
-                    , saveLogin ( lobbyModel.roomName, lobbyModel.playerName )
-                    ]
-                )
-
+        --, Cmd.batch
+        --    [ sendMessage ("join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " somesecret")
+        --    , saveLogin ( lobbyModel.roomName, lobbyModel.playerName )
+        --    ]
+        --)
         _ ->
             ( lobbyModel, Cmd.none )
 
@@ -387,7 +399,7 @@ onWsMsg model wsMsgJson =
                         Room roomModel ->
                             { model | page = Room { roomModel | game = game } }
 
-                        Disconnected _ ->
+                        Disconnected ->
                             model
 
                 Ack ->
@@ -425,8 +437,7 @@ subscriptions model =
     Sub.batch
         [ messageReceiver ReceiveWs
         , wsDisconnectReceiver (always DisconnectedWs)
-
-        --, wsConnectReceiver (always ConnectedWs)
+        , wsConnectReceiver (always ConnectedWs)
         ]
 
 
@@ -446,14 +457,14 @@ view model =
                     Room roomModel ->
                         viewRoom roomModel
 
-                    Disconnected discModel ->
-                        viewDisconnected discModel
+                    Disconnected ->
+                        viewDisconnected
                ]
         )
 
 
-viewDisconnected : DisconnectedModel -> Html Msg
-viewDisconnected discModel =
+viewDisconnected : Html Msg
+viewDisconnected =
     div [ id "disconnected" ] [ text "Trying to reconnect to the server..." ]
 
 
