@@ -4355,93 +4355,12 @@ function _Browser_load(url)
 		}
 	}));
 }
-
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
+var $author$project$Emojigame$UrlChanged = function (a) {
+	return {$: 'UrlChanged', a: a};
 };
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-
-function _Time_now(millisToPosix)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(millisToPosix(Date.now())));
-	});
-}
-
-var _Time_setInterval = F2(function(interval, task)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
-		return function() { clearInterval(id); };
-	});
-});
-
-function _Time_here()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		callback(_Scheduler_succeed(
-			A2($elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
-		));
-	});
-}
-
-
-function _Time_getZoneName()
-{
-	return _Scheduler_binding(function(callback)
-	{
-		try
-		{
-			var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
-		}
-		catch (e)
-		{
-			var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
-		}
-		callback(_Scheduler_succeed(name));
-	});
-}
-var $elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
+var $author$project$Emojigame$UrlRequested = function (a) {
+	return {$: 'UrlRequested', a: a};
 };
-var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -4545,6 +4464,10 @@ var $elm$json$Json$Decode$OneOf = function (a) {
 };
 var $elm$core$Basics$False = {$: 'False'};
 var $elm$core$Basics$add = _Basics_add;
+var $elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $elm$core$String$all = _String_all;
 var $elm$core$Basics$and = _Basics_and;
 var $elm$core$Basics$append = _Utils_append;
@@ -5226,314 +5149,121 @@ var $elm$core$Task$perform = F2(
 			$elm$core$Task$Perform(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
-var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Disconnected = {$: 'Disconnected'};
-var $author$project$Main$GeneratedRandomSecret = function (a) {
-	return {$: 'GeneratedRandomSecret', a: a};
+var $elm$browser$Browser$application = _Browser_application;
+var $author$project$Emojigame$Disconnected = function (a) {
+	return {$: 'Disconnected', a: a};
 };
-var $elm$random$Random$Generate = function (a) {
-	return {$: 'Generate', a: a};
+var $author$project$Emojigame$Reconnect = function (a) {
+	return {$: 'Reconnect', a: a};
 };
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 'Seed', a: a, b: b};
+var $elm$json$Json$Decode$decodeValue = _Json_run;
+var $author$project$Credentials$Credentials = F3(
+	function (playerName, roomId, secret) {
+		return {playerName: playerName, roomId: roomId, secret: secret};
 	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+var $author$project$Game$PlayerName = function (a) {
+	return {$: 'PlayerName', a: a};
 };
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
-};
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
-var $elm$time$Time$posixToMillis = function (_v0) {
-	var millis = _v0.a;
-	return millis;
-};
-var $elm$random$Random$init = A2(
-	$elm$core$Task$andThen,
-	function (time) {
-		return $elm$core$Task$succeed(
-			$elm$random$Random$initialSeed(
-				$elm$time$Time$posixToMillis(time)));
-	},
-	$elm$time$Time$now);
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0.a;
-		return generator(seed);
-	});
-var $elm$random$Random$onEffects = F3(
-	function (router, commands, seed) {
-		if (!commands.b) {
-			return $elm$core$Task$succeed(seed);
-		} else {
-			var generator = commands.a.a;
-			var rest = commands.b;
-			var _v1 = A2($elm$random$Random$step, generator, seed);
-			var value = _v1.a;
-			var newSeed = _v1.b;
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$random$Random$onEffects, router, rest, newSeed);
-				},
-				A2($elm$core$Platform$sendToApp, router, value));
-		}
-	});
-var $elm$random$Random$onSelfMsg = F3(
-	function (_v0, _v1, seed) {
-		return $elm$core$Task$succeed(seed);
-	});
-var $elm$random$Random$Generator = function (a) {
-	return {$: 'Generator', a: a};
-};
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v1 = genA(seed0);
-				var a = _v1.a;
-				var seed1 = _v1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
-	});
-var $elm$random$Random$cmdMap = F2(
-	function (func, _v0) {
-		var generator = _v0.a;
-		return $elm$random$Random$Generate(
-			A2($elm$random$Random$map, func, generator));
-	});
-_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
-var $elm$random$Random$command = _Platform_leaf('Random');
-var $elm$random$Random$generate = F2(
-	function (tagger, generator) {
-		return $elm$random$Random$command(
-			$elm$random$Random$Generate(
-				A2($elm$random$Random$map, tagger, generator)));
-	});
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $elm$random$Random$peel = function (_v0) {
-	var state = _v0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var $elm$random$Random$int = F2(
-	function (a, b) {
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
-				var lo = _v0.a;
-				var hi = _v0.b;
-				var range = (hi - lo) + 1;
-				if (!((range - 1) & range)) {
-					return _Utils_Tuple2(
-						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
-						$elm$random$Random$next(seed0));
-				} else {
-					var threshhold = (((-range) >>> 0) % range) >>> 0;
-					var accountForBias = function (seed) {
-						accountForBias:
-						while (true) {
-							var x = $elm$random$Random$peel(seed);
-							var seedN = $elm$random$Random$next(seed);
-							if (_Utils_cmp(x, threshhold) < 0) {
-								var $temp$seed = seedN;
-								seed = $temp$seed;
-								continue accountForBias;
-							} else {
-								return _Utils_Tuple2((x % range) + lo, seedN);
-							}
-						}
-					};
-					return accountForBias(seed0);
-				}
-			});
-	});
-var $elm$random$Random$maxInt = 2147483647;
-var $elm$random$Random$minInt = -2147483648;
-var $author$project$Main$init = function (secret) {
-	return _Utils_Tuple2(
-		{errorMsg: '', lastWsMsg: '', page: $author$project$Main$Disconnected, randomVal: $elm$core$Maybe$Nothing, secret: secret},
-		A2(
-			$elm$random$Random$generate,
-			$author$project$Main$GeneratedRandomSecret,
-			A2(
-				$elm$random$Random$map,
-				$elm$core$String$fromInt,
-				A2($elm$random$Random$int, $elm$random$Random$minInt, $elm$random$Random$maxInt))));
-};
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Main$ConnectedWs = {$: 'ConnectedWs'};
-var $author$project$Main$DisconnectedWs = {$: 'DisconnectedWs'};
-var $author$project$Main$ReceiveWs = function (a) {
-	return {$: 'ReceiveWs', a: a};
+var $author$project$Game$playerNameDecoder = A2($elm$json$Json$Decode$map, $author$project$Game$PlayerName, $elm$json$Json$Decode$string);
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2($elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var $author$project$RoomId$RoomId = function (a) {
+	return {$: 'RoomId', a: a};
 };
+var $author$project$RoomId$roomIdDecoder = A2($elm$json$Json$Decode$map, $author$project$RoomId$RoomId, $elm$json$Json$Decode$string);
+var $author$project$Credentials$Secret = function (a) {
+	return {$: 'Secret', a: a};
+};
+var $author$project$Credentials$secretDecoder = A2($elm$json$Json$Decode$map, $author$project$Credentials$Secret, $elm$json$Json$Decode$string);
+var $author$project$Credentials$decoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'secret',
+	$author$project$Credentials$secretDecoder,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'roomId',
+		$author$project$RoomId$roomIdDecoder,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'playerName',
+			$author$project$Game$playerNameDecoder,
+			$elm$json$Json$Decode$succeed($author$project$Credentials$Credentials))));
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Emojigame$Create = {$: 'Create'};
+var $author$project$Emojigame$Join = function (a) {
+	return {$: 'Join', a: a};
+};
+var $author$project$Emojigame$updateUrl = function (url) {
+	return $author$project$Emojigame$Disconnected(
+		function () {
+			var _v0 = url.path;
+			if (_v0 === '/') {
+				return $author$project$Emojigame$Create;
+			} else {
+				var p = _v0;
+				return $author$project$Emojigame$Join(
+					$author$project$RoomId$RoomId(
+						A2($elm$core$String$dropLeft, 1, p)));
+			}
+		}());
+};
+var $author$project$Emojigame$init = F3(
+	function (flags, url, key) {
+		return _Utils_Tuple2(
+			{
+				currentUrl: url,
+				navKey: key,
+				page: function () {
+					var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$Credentials$decoder, flags);
+					if (_v0.$ === 'Ok') {
+						var credentials = _v0.a;
+						return $author$project$Emojigame$Disconnected(
+							$author$project$Emojigame$Reconnect(credentials));
+					} else {
+						return $author$project$Emojigame$updateUrl(url);
+					}
+				}()
+			},
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Emojigame$ConnectedWs = {$: 'ConnectedWs'};
+var $author$project$Emojigame$DisconnectedWs = {$: 'DisconnectedWs'};
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $author$project$Main$messageReceiver = _Platform_incomingPort('messageReceiver', $elm$json$Json$Decode$string);
-var $author$project$Main$wsConnectReceiver = _Platform_incomingPort(
-	'wsConnectReceiver',
-	$elm$json$Json$Decode$null(_Utils_Tuple0));
-var $author$project$Main$wsDisconnectReceiver = _Platform_incomingPort(
-	'wsDisconnectReceiver',
-	$elm$json$Json$Decode$null(_Utils_Tuple0));
-var $author$project$Main$subscriptions = function (model) {
-	return $elm$core$Platform$Sub$batch(
-		_List_fromArray(
-			[
-				$author$project$Main$messageReceiver($author$project$Main$ReceiveWs),
-				$author$project$Main$wsDisconnectReceiver(
-				$elm$core$Basics$always($author$project$Main$DisconnectedWs)),
-				$author$project$Main$wsConnectReceiver(
-				$elm$core$Basics$always($author$project$Main$ConnectedWs))
-			]));
-};
-var $author$project$Main$Lobby = function (a) {
-	return {$: 'Lobby', a: a};
-};
-var $author$project$Main$Room = function (a) {
-	return {$: 'Room', a: a};
-};
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$ifInLobby = F2(
-	function (model, func) {
-		var _v0 = model.page;
-		if (_v0.$ === 'Lobby') {
-			var lobbyModel = _v0.a;
-			var _v1 = func(lobbyModel);
-			var newLobbyModel = _v1.a;
-			var cmd = _v1.b;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						page: $author$project$Main$Lobby(newLobbyModel)
-					}),
-				cmd);
-		} else {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{errorMsg: 'Error'}),
-				$elm$core$Platform$Cmd$none);
-		}
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
 	});
-var $author$project$Main$initLobby = {playerName: '', roomName: ''};
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
-var $elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
-var $author$project$Styles$categoryIcon = $elm$svg$Svg$Attributes$style('margin: 5px 7px 5px 6px; cursor: pointer;');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $elm$svg$Svg$Attributes$xmlSpace = A2(_VirtualDom_attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:space');
-var $author$project$Icons$helperFun = F2(
-	function (d_attributes, style) {
-		return A2(
-			$elm$svg$Svg$svg,
-			A2(
-				$elm$core$List$cons,
-				$author$project$Styles$categoryIcon,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$xmlSpace('http://www.w3.org/2000/svg'),
-						$elm$svg$Svg$Attributes$viewBox('0 0 24 24'),
-						$elm$svg$Svg$Attributes$width('24'),
-						$elm$svg$Svg$Attributes$height('24')
-					])),
-			A2(
-				$elm$core$List$map,
-				function (path_attribute) {
-					return A2(
-						$elm$svg$Svg$path,
-						_List_fromArray(
-							[path_attribute, style]),
-						_List_Nil);
-				},
-				d_attributes));
-	});
-var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $author$project$Icons$people_path = _List_fromArray(
-	[
-		$elm$svg$Svg$Attributes$d('M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10'),
-		$elm$svg$Svg$Attributes$d('M8 7a2 2 0 1 0-.001 3.999A2 2 0 0 0 8 7M16 7a2 2 0 1 0-.001 3.999A2 2 0 0 0 16 7M15.232 15c-.693 1.195-1.87 2-3.349 2-1.477 0-2.655-.805-3.347-2H15m3-2H6a6 6 0 1 0 12 0')
-	]);
-var $author$project$Icons$people = _Utils_Tuple2(
-	{
-		emojis: _List_fromArray(
-			['grinning', 'grin', 'joy', 'rolling_on_the_floor_laughing', 'smiley', 'smile', 'sweat_smile', 'laughing', 'wink', 'blush', 'yum', 'sunglasses', 'heart_eyes', 'kissing_heart', 'kissing', 'kissing_smiling_eyes', 'kissing_closed_eyes', 'relaxed', 'slightly_smiling_face', 'hugging_face', 'star-struck', 'thinking_face', 'face_with_raised_eyebrow', 'neutral_face', 'expressionless', 'no_mouth', 'face_with_rolling_eyes', 'smirk', 'persevere', 'disappointed_relieved', 'open_mouth', 'zipper_mouth_face', 'hushed', 'sleepy', 'tired_face', 'sleeping', 'relieved', 'stuck_out_tongue', 'stuck_out_tongue_winking_eye', 'stuck_out_tongue_closed_eyes', 'drooling_face', 'unamused', 'sweat', 'pensive', 'confused', 'upside_down_face', 'money_mouth_face', 'astonished', 'white_frowning_face', 'slightly_frowning_face', 'confounded', 'disappointed', 'worried', 'triumph', 'cry', 'sob', 'frowning', 'anguished', 'fearful', 'weary', 'exploding_head', 'grimacing', 'cold_sweat', 'scream', 'flushed', 'zany_face', 'dizzy_face', 'rage', 'angry', 'face_with_symbols_on_mouth', 'mask', 'face_with_thermometer', 'face_with_head_bandage', 'nauseated_face', 'face_vomiting', 'sneezing_face', 'innocent', 'face_with_cowboy_hat', 'clown_face', 'lying_face', 'shushing_face', 'face_with_hand_over_mouth', 'face_with_monocle', 'nerd_face', 'smiling_imp', 'imp', 'japanese_ogre', 'japanese_goblin', 'skull', 'skull_and_crossbones', 'ghost', 'alien', 'space_invader', 'robot_face', 'hankey', 'smiley_cat', 'smile_cat', 'joy_cat', 'heart_eyes_cat', 'smirk_cat', 'kissing_cat', 'scream_cat', 'crying_cat_face', 'pouting_cat', 'see_no_evil', 'hear_no_evil', 'speak_no_evil', 'baby', 'child', 'boy', 'girl', 'adult', 'man', 'woman', 'older_adult', 'older_man', 'older_woman', 'male-doctor', 'female-doctor', 'male-student', 'female-student', 'male-teacher', 'female-teacher', 'male-judge', 'female-judge', 'male-farmer', 'female-farmer', 'male-cook', 'female-cook', 'male-mechanic', 'female-mechanic', 'male-factory-worker', 'female-factory-worker', 'male-office-worker', 'female-office-worker', 'male-scientist', 'female-scientist', 'male-technologist', 'female-technologist', 'male-singer', 'female-singer', 'male-artist', 'female-artist', 'male-pilot', 'female-pilot', 'male-astronaut', 'female-astronaut', 'male-firefighter', 'female-firefighter', 'cop', 'male-police-officer', 'female-police-officer', 'sleuth_or_spy', 'male-detective', 'female-detective', 'guardsman', 'male-guard', 'female-guard', 'construction_worker', 'male-construction-worker', 'female-construction-worker', 'prince', 'princess', 'man_with_turban', 'man-wearing-turban', 'woman-wearing-turban', 'man_with_gua_pi_mao', 'person_with_headscarf', 'bearded_person', 'person_with_blond_hair', 'blond-haired-man', 'blond-haired-woman', 'man_in_tuxedo', 'bride_with_veil', 'pregnant_woman', 'breast-feeding', 'angel', 'santa', 'mrs_claus', 'mage', 'female_mage', 'male_mage', 'fairy', 'female_fairy', 'male_fairy', 'vampire', 'female_vampire', 'male_vampire', 'merperson', 'mermaid', 'merman', 'elf', 'female_elf', 'male_elf', 'genie', 'female_genie', 'male_genie', 'zombie', 'female_zombie', 'male_zombie', 'person_frowning', 'man-frowning', 'woman-frowning', 'person_with_pouting_face', 'man-pouting', 'woman-pouting', 'no_good', 'man-gesturing-no', 'woman-gesturing-no', 'ok_woman', 'man-gesturing-ok', 'woman-gesturing-ok', 'information_desk_person', 'man-tipping-hand', 'woman-tipping-hand', 'raising_hand', 'man-raising-hand', 'woman-raising-hand', 'bow', 'man-bowing', 'woman-bowing', 'face_palm', 'man-facepalming', 'woman-facepalming', 'shrug', 'man-shrugging', 'woman-shrugging', 'massage', 'man-getting-massage', 'woman-getting-massage', 'haircut', 'man-getting-haircut', 'woman-getting-haircut', 'walking', 'man-walking', 'woman-walking', 'runner', 'man-running', 'woman-running', 'dancer', 'man_dancing', 'dancers', 'man-with-bunny-ears-partying', 'woman-with-bunny-ears-partying', 'person_in_steamy_room', 'woman_in_steamy_room', 'man_in_steamy_room', 'person_climbing', 'woman_climbing', 'man_climbing', 'person_in_lotus_position', 'woman_in_lotus_position', 'man_in_lotus_position', 'bath', 'sleeping_accommodation', 'man_in_business_suit_levitating', 'speaking_head_in_silhouette', 'bust_in_silhouette', 'busts_in_silhouette', 'fencer', 'horse_racing', 'skier', 'snowboarder', 'golfer', 'man-golfing', 'woman-golfing', 'surfer', 'man-surfing', 'woman-surfing', 'rowboat', 'man-rowing-boat', 'woman-rowing-boat', 'swimmer', 'man-swimming', 'woman-swimming', 'person_with_ball', 'man-bouncing-ball', 'woman-bouncing-ball', 'weight_lifter', 'man-lifting-weights', 'woman-lifting-weights', 'bicyclist', 'man-biking', 'woman-biking', 'mountain_bicyclist', 'man-mountain-biking', 'woman-mountain-biking', 'racing_car', 'racing_motorcycle', 'person_doing_cartwheel', 'man-cartwheeling', 'woman-cartwheeling', 'wrestlers', 'man-wrestling', 'woman-wrestling', 'water_polo', 'man-playing-water-polo', 'woman-playing-water-polo', 'handball', 'man-playing-handball', 'woman-playing-handball', 'juggling', 'man-juggling', 'woman-juggling', 'couple', 'two_men_holding_hands', 'two_women_holding_hands', 'couplekiss', 'woman-kiss-man', 'man-kiss-man', 'woman-kiss-woman', 'couple_with_heart', 'woman-heart-man', 'man-heart-man', 'woman-heart-woman', 'family', 'man-woman-boy', 'man-woman-girl', 'man-woman-girl-boy', 'man-woman-boy-boy', 'man-woman-girl-girl', 'man-man-boy', 'man-man-girl', 'man-man-girl-boy', 'man-man-boy-boy', 'man-man-girl-girl', 'woman-woman-boy', 'woman-woman-girl', 'woman-woman-girl-boy', 'woman-woman-boy-boy', 'woman-woman-girl-girl', 'man-boy', 'man-boy-boy', 'man-girl', 'man-girl-boy', 'man-girl-girl', 'woman-boy', 'woman-boy-boy', 'woman-girl', 'woman-girl-boy', 'woman-girl-girl', 'selfie', 'muscle', 'point_left', 'point_right', 'point_up', 'point_up_2', 'middle_finger', 'point_down', 'v', 'crossed_fingers', 'spock-hand', 'the_horns', 'call_me_hand', 'raised_hand_with_fingers_splayed', 'hand', 'ok_hand', '+1', '-1', 'fist', 'facepunch', 'left-facing_fist', 'right-facing_fist', 'raised_back_of_hand', 'wave', 'i_love_you_hand_sign', 'writing_hand', 'clap', 'open_hands', 'raised_hands', 'palms_up_together', 'pray', 'handshake', 'nail_care', 'ear', 'nose', 'footprints', 'eyes', 'eye', 'eye-in-speech-bubble', 'brain', 'tongue', 'lips', 'kiss', 'cupid', 'heart', 'heartbeat', 'broken_heart', 'two_hearts', 'sparkling_heart', 'heartpulse', 'blue_heart', 'green_heart', 'yellow_heart', 'orange_heart', 'purple_heart', 'black_heart', 'gift_heart', 'revolving_hearts', 'heart_decoration', 'heavy_heart_exclamation_mark_ornament', 'love_letter', 'zzz', 'anger', 'bomb', 'boom', 'sweat_drops', 'dash', 'dizzy', 'speech_balloon', 'left_speech_bubble', 'right_anger_bubble', 'thought_balloon', 'hole', 'eyeglasses', 'dark_sunglasses', 'necktie', 'shirt', 'jeans', 'scarf', 'gloves', 'coat', 'socks', 'dress', 'kimono', 'bikini', 'womans_clothes', 'purse', 'handbag', 'pouch', 'shopping_bags', 'school_satchel', 'mans_shoe', 'athletic_shoe', 'high_heel', 'sandal', 'boot', 'crown', 'womans_hat', 'tophat', 'mortar_board', 'billed_cap', 'helmet_with_white_cross', 'prayer_beads', 'lipstick', 'ring', 'gem']),
-		id: 'people',
-		name: 'Smileys & People'
-	},
-	$author$project$Icons$helperFun($author$project$Icons$people_path));
-var $author$project$EmojiPicker$EmojiPicker$init = function (config) {
-	return {activeCategory: $author$project$Icons$people.a, closeOnSelect: config.closeOnSelect, hidden: true, offsetX: config.offsetX, offsetY: config.offsetY, skinColor: 'none'};
+var $author$project$WsApi$Error = function (a) {
+	return {$: 'Error', a: a};
 };
-var $author$project$Main$initEmojiPicker = $author$project$EmojiPicker$EmojiPicker$init(
-	{closeOnSelect: false, offsetX: 0, offsetY: 0});
-var $author$project$Main$initRoom = F2(
-	function (lobbyModel, game) {
-		return {
-			emojiPicker: _Utils_update(
-				$author$project$Main$initEmojiPicker,
-				{hidden: false}),
-			game: game,
-			playerName: lobbyModel.playerName,
-			playerToBeKicked: $elm$core$Maybe$Nothing,
-			roomName: lobbyModel.roomName,
-			submission: ''
-		};
-	});
-var $author$project$Main$Ack = {$: 'Ack'};
-var $author$project$Main$ErrorMsg = function (a) {
-	return {$: 'ErrorMsg', a: a};
-};
-var $author$project$Main$GameState = function (a) {
+var $author$project$WsApi$GameState = function (a) {
 	return {$: 'GameState', a: a};
 };
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $author$project$Main$Game = F3(
-	function (players, name, turns) {
-		return {name: name, players: players, turns: turns};
+var $author$project$WsApi$Joined = F2(
+	function (a, b) {
+		return {$: 'Joined', a: a, b: b};
+	});
+var $author$project$WsApi$Secret = function (a) {
+	return {$: 'Secret', a: a};
+};
+var $author$project$Game$Game = F3(
+	function (players, id, turns) {
+		return {id: id, players: players, turns: turns};
 	});
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -5552,7 +5282,7 @@ var $mgold$elm_nonempty_list$List$Nonempty$fromList = function (ys) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $author$project$Main$nonemptyListDecoder = function (value) {
+var $author$project$Game$nonemptyListDecoder = function (value) {
 	var fn = function (l) {
 		var _v0 = $mgold$elm_nonempty_list$List$Nonempty$fromList(l);
 		if (_v0.$ === 'Nothing') {
@@ -5567,21 +5297,13 @@ var $author$project$Main$nonemptyListDecoder = function (value) {
 		fn,
 		$elm$json$Json$Decode$list(value));
 };
-var $author$project$Main$Player = F3(
+var $author$project$Game$Player = F3(
 	function (name, points, active) {
 		return {active: active, name: name, points: points};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
-var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
-	function (key, valDecoder, decoder) {
-		return A2(
-			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
-			A2($elm$json$Json$Decode$field, key, valDecoder),
-			decoder);
-	});
-var $author$project$Main$playerDecoder = A3(
+var $author$project$Game$playerDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'active',
 	$elm$json$Json$Decode$bool,
@@ -5592,9 +5314,9 @@ var $author$project$Main$playerDecoder = A3(
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'name',
-			$elm$json$Json$Decode$string,
-			$elm$json$Json$Decode$succeed($author$project$Main$Player))));
-var $author$project$Main$Turn = F5(
+			$author$project$Game$playerNameDecoder,
+			$elm$json$Json$Decode$succeed($author$project$Game$Player))));
+var $author$project$Game$Turn = F5(
 	function (phrase, submissions, guesser, submissionsComplete, bestSubmissionPlayerName) {
 		return {bestSubmissionPlayerName: bestSubmissionPlayerName, guesser: guesser, phrase: phrase, submissions: submissions, submissionsComplete: submissionsComplete};
 	});
@@ -5728,6 +5450,75 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 		$elm$core$Dict$fromList,
 		$elm$json$Json$Decode$keyValuePairs(decoder));
 };
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $pzp1997$assoc_list$AssocList$D = function (a) {
+	return {$: 'D', a: a};
+};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $pzp1997$assoc_list$AssocList$remove = F2(
+	function (targetKey, _v0) {
+		var alist = _v0.a;
+		return $pzp1997$assoc_list$AssocList$D(
+			A2(
+				$elm$core$List$filter,
+				function (_v1) {
+					var key = _v1.a;
+					return !_Utils_eq(key, targetKey);
+				},
+				alist));
+	});
+var $pzp1997$assoc_list$AssocList$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A2($pzp1997$assoc_list$AssocList$remove, key, dict);
+		var alteredAlist = _v0.a;
+		return $pzp1997$assoc_list$AssocList$D(
+			A2(
+				$elm$core$List$cons,
+				_Utils_Tuple2(key, value),
+				alteredAlist));
+	});
+var $pzp1997$assoc_list$AssocList$fromList = function (alist) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, result) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($pzp1997$assoc_list$AssocList$insert, key, value, result);
+			}),
+		$pzp1997$assoc_list$AssocList$D(_List_Nil),
+		alist);
+};
+var $author$project$Game$mapDict = A2(
+	$elm$core$Basics$composeR,
+	$elm$core$Dict$toList,
+	A2(
+		$elm$core$Basics$composeR,
+		$elm$core$List$map(
+			function (_v0) {
+				var k = _v0.a;
+				var v = _v0.b;
+				return _Utils_Tuple2(
+					$author$project$Game$PlayerName(k),
+					v);
+			}),
+		$pzp1997$assoc_list$AssocList$fromList));
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
 var $elm$json$Json$Decode$maybe = function (decoder) {
 	return $elm$json$Json$Decode$oneOf(
 		_List_fromArray(
@@ -5736,10 +5527,10 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $author$project$Main$turnDecoder = A3(
+var $author$project$Game$turnDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'bestSubmissionPlayerName',
-	$elm$json$Json$Decode$maybe($elm$json$Json$Decode$string),
+	$elm$json$Json$Decode$maybe($author$project$Game$playerNameDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 		'submissionsComplete',
@@ -5747,106 +5538,377 @@ var $author$project$Main$turnDecoder = A3(
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'guesser',
-			$elm$json$Json$Decode$string,
+			$author$project$Game$playerNameDecoder,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 				'submissions',
-				$elm$json$Json$Decode$dict($elm$json$Json$Decode$string),
+				A2(
+					$elm$json$Json$Decode$map,
+					$author$project$Game$mapDict,
+					$elm$json$Json$Decode$dict($elm$json$Json$Decode$string)),
 				A3(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 					'phrase',
 					$elm$json$Json$Decode$string,
-					$elm$json$Json$Decode$succeed($author$project$Main$Turn))))));
-var $author$project$Main$gameDecoder = A3(
+					$elm$json$Json$Decode$succeed($author$project$Game$Turn))))));
+var $author$project$Game$gameDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 	'turns',
-	$author$project$Main$nonemptyListDecoder($author$project$Main$turnDecoder),
+	$author$project$Game$nonemptyListDecoder($author$project$Game$turnDecoder),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'name',
-		$elm$json$Json$Decode$string,
+		'id',
+		$author$project$RoomId$roomIdDecoder,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
 			'players',
-			$elm$json$Json$Decode$list($author$project$Main$playerDecoder),
-			$elm$json$Json$Decode$succeed($author$project$Main$Game))));
-var $author$project$Main$wsMsgDecoder = $elm$json$Json$Decode$oneOf(
+			$elm$json$Json$Decode$list($author$project$Game$playerDecoder),
+			$elm$json$Json$Decode$succeed($author$project$Game$Game))));
+var $author$project$WsApi$createdDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	F2(
+		function (a, b) {
+			return _Utils_Tuple2(a, b);
+		}),
+	A2($elm$json$Json$Decode$field, 'game', $author$project$Game$gameDecoder),
+	A2(
+		$elm$json$Json$Decode$map,
+		$author$project$Credentials$Secret,
+		A2($elm$json$Json$Decode$field, 'secret', $elm$json$Json$Decode$string)));
+var $author$project$WsApi$decoder = $elm$json$Json$Decode$oneOf(
 	_List_fromArray(
 		[
 			A2(
 			$elm$json$Json$Decode$map,
-			$author$project$Main$GameState,
-			A2($elm$json$Json$Decode$field, 'game', $author$project$Main$gameDecoder)),
-			A2(
-			$elm$json$Json$Decode$field,
-			'ack',
-			$elm$json$Json$Decode$succeed($author$project$Main$Ack)),
+			$author$project$WsApi$GameState,
+			A2($elm$json$Json$Decode$field, 'game', $author$project$Game$gameDecoder)),
 			A2(
 			$elm$json$Json$Decode$map,
-			$author$project$Main$ErrorMsg,
-			A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string))
+			$author$project$WsApi$Error,
+			A2($elm$json$Json$Decode$field, 'error', $elm$json$Json$Decode$string)),
+			A2(
+			$elm$json$Json$Decode$map,
+			A2($elm$core$Basics$composeL, $author$project$WsApi$Secret, $author$project$Credentials$Secret),
+			A2($elm$json$Json$Decode$field, 'secret', $elm$json$Json$Decode$string)),
+			A2(
+			$elm$json$Json$Decode$map,
+			function (_v0) {
+				var g = _v0.a;
+				var s = _v0.b;
+				return A2($author$project$WsApi$Joined, g, s);
+			},
+			A2($elm$json$Json$Decode$field, 'joined', $author$project$WsApi$createdDecoder))
 		]));
-var $author$project$Main$onWsMsg = F2(
-	function (model, wsMsgJson) {
-		var _v0 = A2($elm$json$Json$Decode$decodeString, $author$project$Main$wsMsgDecoder, wsMsgJson);
-		if (_v0.$ === 'Ok') {
-			var wsMsg = _v0.a;
-			switch (wsMsg.$) {
-				case 'GameState':
-					var game = wsMsg.a;
-					var _v2 = model.page;
-					switch (_v2.$) {
-						case 'Lobby':
-							var lobbyModel = _v2.a;
-							return _Utils_update(
-								model,
-								{
-									page: $author$project$Main$Room(
-										A2($author$project$Main$initRoom, lobbyModel, game))
-								});
-						case 'Room':
-							var roomModel = _v2.a;
-							return _Utils_update(
-								model,
-								{
-									page: $author$project$Main$Room(
-										_Utils_update(
-											roomModel,
-											{game: game}))
-								});
-						default:
-							return model;
-					}
-				case 'Ack':
-					return model;
-				default:
-					var msg = wsMsg.a;
-					return _Utils_update(
-						model,
-						{errorMsg: msg});
+var $author$project$Emojigame$ReceiveWs = function (a) {
+	return {$: 'ReceiveWs', a: a};
+};
+var $author$project$Emojigame$WsError = function (a) {
+	return {$: 'WsError', a: a};
+};
+var $author$project$Emojigame$helper = function (result) {
+	if (result.$ === 'Ok') {
+		var wsMsg = result.a;
+		return $author$project$Emojigame$ReceiveWs(wsMsg);
+	} else {
+		var error = result.a;
+		return $author$project$Emojigame$WsError(
+			$elm$json$Json$Decode$errorToString(error));
+	}
+};
+var $author$project$Emojigame$messageReceiver = _Platform_incomingPort('messageReceiver', $elm$json$Json$Decode$string);
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $author$project$Emojigame$wsConnectReceiver = _Platform_incomingPort(
+	'wsConnectReceiver',
+	$elm$json$Json$Decode$null(_Utils_Tuple0));
+var $author$project$Emojigame$wsDisconnectReceiver = _Platform_incomingPort(
+	'wsDisconnectReceiver',
+	$elm$json$Json$Decode$null(_Utils_Tuple0));
+var $author$project$Emojigame$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				$author$project$Emojigame$messageReceiver(
+				A2(
+					$elm$core$Basics$composeL,
+					$author$project$Emojigame$helper,
+					$elm$json$Json$Decode$decodeString($author$project$WsApi$decoder))),
+				$author$project$Emojigame$wsDisconnectReceiver(
+				$elm$core$Basics$always($author$project$Emojigame$DisconnectedWs)),
+				$author$project$Emojigame$wsConnectReceiver(
+				$elm$core$Basics$always($author$project$Emojigame$ConnectedWs))
+			]));
+};
+var $author$project$Emojigame$Creating = F2(
+	function (a, b) {
+		return {$: 'Creating', a: a, b: b};
+	});
+var $author$project$Emojigame$CreatingScreen = F2(
+	function (a, b) {
+		return {$: 'CreatingScreen', a: a, b: b};
+	});
+var $author$project$Emojigame$Error = function (a) {
+	return {$: 'Error', a: a};
+};
+var $author$project$Emojigame$Joining = F2(
+	function (a, b) {
+		return {$: 'Joining', a: a, b: b};
+	});
+var $author$project$Emojigame$JoiningScreen = F2(
+	function (a, b) {
+		return {$: 'JoiningScreen', a: a, b: b};
+	});
+var $author$project$Emojigame$Playing = function (a) {
+	return {$: 'Playing', a: a};
+};
+var $author$project$PlayingScreen$UpdateGame = function (a) {
+	return {$: 'UpdateGame', a: a};
+};
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Emojigame$sendMessage = _Platform_outgoingPort('sendMessage', $elm$json$Json$Encode$string);
+var $author$project$Emojigame$createRoom = F2(
+	function (settings, _v0) {
+		var playerName = _v0.a;
+		return $author$project$Emojigame$sendMessage('create ' + playerName);
+	});
+var $author$project$Emojigame$defaultSettings = {phraseSet: ''};
+var $author$project$PlayingScreen$Guess = {$: 'Guess'};
+var $author$project$PlayingScreen$Invite = {$: 'Invite'};
+var $author$project$PlayingScreen$Submissions = {$: 'Submissions'};
+var $author$project$PlayingScreen$Wait = {$: 'Wait'};
+var $author$project$PlayingScreen$Write = function (a) {
+	return {$: 'Write', a: a};
+};
+var $mgold$elm_nonempty_list$List$Nonempty$head = function (_v0) {
+	var x = _v0.a;
+	var xs = _v0.b;
+	return x;
+};
+var $author$project$PlayingScreen$currentTurn = function (game) {
+	return $mgold$elm_nonempty_list$List$Nonempty$head(game.turns);
+};
+var $pzp1997$assoc_list$AssocList$keys = function (_v0) {
+	var alist = _v0.a;
+	return A2($elm$core$List$map, $elm$core$Tuple$first, alist);
+};
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
 			}
-		} else {
-			var msg = _v0.a;
-			return _Utils_update(
-				model,
-				{
-					errorMsg: 'Decode Error: ' + $elm$json$Json$Decode$errorToString(msg)
-				});
 		}
 	});
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Main$sendMessage = _Platform_outgoingPort('sendMessage', $elm$json$Json$Encode$string);
-var $author$project$Main$updateLobby = F2(
-	function (msg, lobbyModel) {
-		return _Utils_Tuple2(lobbyModel, $elm$core$Platform$Cmd$none);
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
 	});
-var $author$project$Main$EmojiMsg = function (a) {
-	return {$: 'EmojiMsg', a: a};
+var $author$project$PlayingScreen$hasSubmittedForCurrentTurn = F2(
+	function (game, credentials) {
+		return A2(
+			$elm$core$List$member,
+			credentials.playerName,
+			$pzp1997$assoc_list$AssocList$keys(
+				$author$project$PlayingScreen$currentTurn(game).submissions));
+	});
+var $author$project$PlayingScreen$iAmTheGuesser = F2(
+	function (game, credentials) {
+		return _Utils_eq(
+			$author$project$PlayingScreen$currentTurn(game).guesser,
+			credentials.playerName);
+	});
+var $author$project$PlayingScreen$currentScreen = F2(
+	function (game, credentials) {
+		return ($elm$core$List$length(game.players) < 2) ? $author$project$PlayingScreen$Invite : (A2($author$project$PlayingScreen$iAmTheGuesser, game, credentials) ? ($author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Guess : $author$project$PlayingScreen$Wait) : ($author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Submissions : (A2($author$project$PlayingScreen$hasSubmittedForCurrentTurn, game, credentials) ? $author$project$PlayingScreen$Wait : $author$project$PlayingScreen$Write(''))));
+	});
+var $elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
+var $author$project$Styles$categoryIcon = $elm$svg$Svg$Attributes$style('margin: 5px 7px 5px 6px; cursor: pointer;');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $elm$svg$Svg$Attributes$xmlSpace = A2(_VirtualDom_attributeNS, 'http://www.w3.org/XML/1998/namespace', 'xml:space');
+var $author$project$Icons$helperFun = F2(
+	function (d_attributes, style) {
+		return A2(
+			$elm$svg$Svg$svg,
+			A2(
+				$elm$core$List$cons,
+				$author$project$Styles$categoryIcon,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$xmlSpace('http://www.w3.org/2000/svg'),
+						$elm$svg$Svg$Attributes$viewBox('0 0 24 24'),
+						$elm$svg$Svg$Attributes$width('24'),
+						$elm$svg$Svg$Attributes$height('24')
+					])),
+			A2(
+				$elm$core$List$map,
+				function (path_attribute) {
+					return A2(
+						$elm$svg$Svg$path,
+						_List_fromArray(
+							[path_attribute, style]),
+						_List_Nil);
+				},
+				d_attributes));
+	});
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $author$project$Icons$people_path = _List_fromArray(
+	[
+		$elm$svg$Svg$Attributes$d('M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0m0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10'),
+		$elm$svg$Svg$Attributes$d('M8 7a2 2 0 1 0-.001 3.999A2 2 0 0 0 8 7M16 7a2 2 0 1 0-.001 3.999A2 2 0 0 0 16 7M15.232 15c-.693 1.195-1.87 2-3.349 2-1.477 0-2.655-.805-3.347-2H15m3-2H6a6 6 0 1 0 12 0')
+	]);
+var $author$project$Icons$people = _Utils_Tuple2(
+	{
+		emojis: _List_fromArray(
+			['grinning', 'grin', 'joy', 'rolling_on_the_floor_laughing', 'smiley', 'smile', 'sweat_smile', 'laughing', 'wink', 'blush', 'yum', 'sunglasses', 'heart_eyes', 'kissing_heart', 'kissing', 'kissing_smiling_eyes', 'kissing_closed_eyes', 'relaxed', 'slightly_smiling_face', 'hugging_face', 'star-struck', 'thinking_face', 'face_with_raised_eyebrow', 'neutral_face', 'expressionless', 'no_mouth', 'face_with_rolling_eyes', 'smirk', 'persevere', 'disappointed_relieved', 'open_mouth', 'zipper_mouth_face', 'hushed', 'sleepy', 'tired_face', 'sleeping', 'relieved', 'stuck_out_tongue', 'stuck_out_tongue_winking_eye', 'stuck_out_tongue_closed_eyes', 'drooling_face', 'unamused', 'sweat', 'pensive', 'confused', 'upside_down_face', 'money_mouth_face', 'astonished', 'white_frowning_face', 'slightly_frowning_face', 'confounded', 'disappointed', 'worried', 'triumph', 'cry', 'sob', 'frowning', 'anguished', 'fearful', 'weary', 'exploding_head', 'grimacing', 'cold_sweat', 'scream', 'flushed', 'zany_face', 'dizzy_face', 'rage', 'angry', 'face_with_symbols_on_mouth', 'mask', 'face_with_thermometer', 'face_with_head_bandage', 'nauseated_face', 'face_vomiting', 'sneezing_face', 'innocent', 'face_with_cowboy_hat', 'clown_face', 'lying_face', 'shushing_face', 'face_with_hand_over_mouth', 'face_with_monocle', 'nerd_face', 'smiling_imp', 'imp', 'japanese_ogre', 'japanese_goblin', 'skull', 'skull_and_crossbones', 'ghost', 'alien', 'space_invader', 'robot_face', 'hankey', 'smiley_cat', 'smile_cat', 'joy_cat', 'heart_eyes_cat', 'smirk_cat', 'kissing_cat', 'scream_cat', 'crying_cat_face', 'pouting_cat', 'see_no_evil', 'hear_no_evil', 'speak_no_evil', 'baby', 'child', 'boy', 'girl', 'adult', 'man', 'woman', 'older_adult', 'older_man', 'older_woman', 'male-doctor', 'female-doctor', 'male-student', 'female-student', 'male-teacher', 'female-teacher', 'male-judge', 'female-judge', 'male-farmer', 'female-farmer', 'male-cook', 'female-cook', 'male-mechanic', 'female-mechanic', 'male-factory-worker', 'female-factory-worker', 'male-office-worker', 'female-office-worker', 'male-scientist', 'female-scientist', 'male-technologist', 'female-technologist', 'male-singer', 'female-singer', 'male-artist', 'female-artist', 'male-pilot', 'female-pilot', 'male-astronaut', 'female-astronaut', 'male-firefighter', 'female-firefighter', 'cop', 'male-police-officer', 'female-police-officer', 'sleuth_or_spy', 'male-detective', 'female-detective', 'guardsman', 'male-guard', 'female-guard', 'construction_worker', 'male-construction-worker', 'female-construction-worker', 'prince', 'princess', 'man_with_turban', 'man-wearing-turban', 'woman-wearing-turban', 'man_with_gua_pi_mao', 'person_with_headscarf', 'bearded_person', 'person_with_blond_hair', 'blond-haired-man', 'blond-haired-woman', 'man_in_tuxedo', 'bride_with_veil', 'pregnant_woman', 'breast-feeding', 'angel', 'santa', 'mrs_claus', 'mage', 'female_mage', 'male_mage', 'fairy', 'female_fairy', 'male_fairy', 'vampire', 'female_vampire', 'male_vampire', 'merperson', 'mermaid', 'merman', 'elf', 'female_elf', 'male_elf', 'genie', 'female_genie', 'male_genie', 'zombie', 'female_zombie', 'male_zombie', 'person_frowning', 'man-frowning', 'woman-frowning', 'person_with_pouting_face', 'man-pouting', 'woman-pouting', 'no_good', 'man-gesturing-no', 'woman-gesturing-no', 'ok_woman', 'man-gesturing-ok', 'woman-gesturing-ok', 'information_desk_person', 'man-tipping-hand', 'woman-tipping-hand', 'raising_hand', 'man-raising-hand', 'woman-raising-hand', 'bow', 'man-bowing', 'woman-bowing', 'face_palm', 'man-facepalming', 'woman-facepalming', 'shrug', 'man-shrugging', 'woman-shrugging', 'massage', 'man-getting-massage', 'woman-getting-massage', 'haircut', 'man-getting-haircut', 'woman-getting-haircut', 'walking', 'man-walking', 'woman-walking', 'runner', 'man-running', 'woman-running', 'dancer', 'man_dancing', 'dancers', 'man-with-bunny-ears-partying', 'woman-with-bunny-ears-partying', 'person_in_steamy_room', 'woman_in_steamy_room', 'man_in_steamy_room', 'person_climbing', 'woman_climbing', 'man_climbing', 'person_in_lotus_position', 'woman_in_lotus_position', 'man_in_lotus_position', 'bath', 'sleeping_accommodation', 'man_in_business_suit_levitating', 'speaking_head_in_silhouette', 'bust_in_silhouette', 'busts_in_silhouette', 'fencer', 'horse_racing', 'skier', 'snowboarder', 'golfer', 'man-golfing', 'woman-golfing', 'surfer', 'man-surfing', 'woman-surfing', 'rowboat', 'man-rowing-boat', 'woman-rowing-boat', 'swimmer', 'man-swimming', 'woman-swimming', 'person_with_ball', 'man-bouncing-ball', 'woman-bouncing-ball', 'weight_lifter', 'man-lifting-weights', 'woman-lifting-weights', 'bicyclist', 'man-biking', 'woman-biking', 'mountain_bicyclist', 'man-mountain-biking', 'woman-mountain-biking', 'racing_car', 'racing_motorcycle', 'person_doing_cartwheel', 'man-cartwheeling', 'woman-cartwheeling', 'wrestlers', 'man-wrestling', 'woman-wrestling', 'water_polo', 'man-playing-water-polo', 'woman-playing-water-polo', 'handball', 'man-playing-handball', 'woman-playing-handball', 'juggling', 'man-juggling', 'woman-juggling', 'couple', 'two_men_holding_hands', 'two_women_holding_hands', 'couplekiss', 'woman-kiss-man', 'man-kiss-man', 'woman-kiss-woman', 'couple_with_heart', 'woman-heart-man', 'man-heart-man', 'woman-heart-woman', 'family', 'man-woman-boy', 'man-woman-girl', 'man-woman-girl-boy', 'man-woman-boy-boy', 'man-woman-girl-girl', 'man-man-boy', 'man-man-girl', 'man-man-girl-boy', 'man-man-boy-boy', 'man-man-girl-girl', 'woman-woman-boy', 'woman-woman-girl', 'woman-woman-girl-boy', 'woman-woman-boy-boy', 'woman-woman-girl-girl', 'man-boy', 'man-boy-boy', 'man-girl', 'man-girl-boy', 'man-girl-girl', 'woman-boy', 'woman-boy-boy', 'woman-girl', 'woman-girl-boy', 'woman-girl-girl', 'selfie', 'muscle', 'point_left', 'point_right', 'point_up', 'point_up_2', 'middle_finger', 'point_down', 'v', 'crossed_fingers', 'spock-hand', 'the_horns', 'call_me_hand', 'raised_hand_with_fingers_splayed', 'hand', 'ok_hand', '+1', '-1', 'fist', 'facepunch', 'left-facing_fist', 'right-facing_fist', 'raised_back_of_hand', 'wave', 'i_love_you_hand_sign', 'writing_hand', 'clap', 'open_hands', 'raised_hands', 'palms_up_together', 'pray', 'handshake', 'nail_care', 'ear', 'nose', 'footprints', 'eyes', 'eye', 'eye-in-speech-bubble', 'brain', 'tongue', 'lips', 'kiss', 'cupid', 'heart', 'heartbeat', 'broken_heart', 'two_hearts', 'sparkling_heart', 'heartpulse', 'blue_heart', 'green_heart', 'yellow_heart', 'orange_heart', 'purple_heart', 'black_heart', 'gift_heart', 'revolving_hearts', 'heart_decoration', 'heavy_heart_exclamation_mark_ornament', 'love_letter', 'zzz', 'anger', 'bomb', 'boom', 'sweat_drops', 'dash', 'dizzy', 'speech_balloon', 'left_speech_bubble', 'right_anger_bubble', 'thought_balloon', 'hole', 'eyeglasses', 'dark_sunglasses', 'necktie', 'shirt', 'jeans', 'scarf', 'gloves', 'coat', 'socks', 'dress', 'kimono', 'bikini', 'womans_clothes', 'purse', 'handbag', 'pouch', 'shopping_bags', 'school_satchel', 'mans_shoe', 'athletic_shoe', 'high_heel', 'sandal', 'boot', 'crown', 'womans_hat', 'tophat', 'mortar_board', 'billed_cap', 'helmet_with_white_cross', 'prayer_beads', 'lipstick', 'ring', 'gem']),
+		id: 'people',
+		name: 'Smileys & People'
+	},
+	$author$project$Icons$helperFun($author$project$Icons$people_path));
+var $author$project$EmojiPicker$EmojiPicker$init = function (config) {
+	return {activeCategory: $author$project$Icons$people.a, closeOnSelect: config.closeOnSelect, hidden: true, offsetX: config.offsetX, offsetY: config.offsetY, skinColor: 'none'};
 };
-var $author$project$Main$cleanSubmission = function (input) {
-	return input;
+var $author$project$PlayingScreen$initEmojiPicker = $author$project$EmojiPicker$EmojiPicker$init(
+	{closeOnSelect: false, offsetX: 0, offsetY: 0});
+var $author$project$PlayingScreen$init = F3(
+	function (credentials, game, link) {
+		return {
+			credentials: credentials,
+			emojiPicker: $author$project$PlayingScreen$initEmojiPicker,
+			game: game,
+			link: link,
+			phase: A2($author$project$PlayingScreen$currentScreen, game, credentials)
+		};
+	});
+var $author$project$Emojigame$join = F2(
+	function (_v0, _v1) {
+		var roomId = _v0.a;
+		var playerName = _v1.a;
+		return $author$project$Emojigame$sendMessage('join ' + (roomId + (' ' + playerName)));
+	});
+var $elm$core$Debug$log = _Debug_log;
+var $elm$url$Url$addPort = F2(
+	function (maybePort, starter) {
+		if (maybePort.$ === 'Nothing') {
+			return starter;
+		} else {
+			var port_ = maybePort.a;
+			return starter + (':' + $elm$core$String$fromInt(port_));
+		}
+	});
+var $elm$url$Url$addPrefixed = F3(
+	function (prefix, maybeSegment, starter) {
+		if (maybeSegment.$ === 'Nothing') {
+			return starter;
+		} else {
+			var segment = maybeSegment.a;
+			return _Utils_ap(
+				starter,
+				_Utils_ap(prefix, segment));
+		}
+	});
+var $elm$url$Url$toString = function (url) {
+	var http = function () {
+		var _v0 = url.protocol;
+		if (_v0.$ === 'Http') {
+			return 'http://';
+		} else {
+			return 'https://';
+		}
+	}();
+	return A3(
+		$elm$url$Url$addPrefixed,
+		'#',
+		url.fragment,
+		A3(
+			$elm$url$Url$addPrefixed,
+			'?',
+			url.query,
+			_Utils_ap(
+				A2(
+					$elm$url$Url$addPort,
+					url.port_,
+					_Utils_ap(http, url.host)),
+				url.path)));
+};
+var $author$project$Emojigame$makeLink = function (url) {
+	return $elm$url$Url$toString(url);
+};
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $author$project$Emojigame$PlayingMsg = function (a) {
+	return {$: 'PlayingMsg', a: a};
 };
 var $elm$core$Platform$Cmd$map = _Platform_map;
+var $author$project$Emojigame$mapPlayingUpdate = function (_v0) {
+	var m = _v0.a;
+	var c = _v0.b;
+	var wsm = _v0.c;
+	var wsCmd = function () {
+		if (wsm.$ === 'Just') {
+			var cmdStr = wsm.a.a;
+			return $author$project$Emojigame$sendMessage(cmdStr);
+		} else {
+			return $elm$core$Platform$Cmd$none;
+		}
+	}();
+	return _Utils_Tuple2(
+		$author$project$Emojigame$Playing(m),
+		$elm$core$Platform$Cmd$batch(
+			_List_fromArray(
+				[
+					A2($elm$core$Platform$Cmd$map, $author$project$Emojigame$PlayingMsg, c),
+					wsCmd
+				])));
+};
+var $author$project$Emojigame$reconnect = function (credentials) {
+	var _v0 = credentials.secret;
+	var secret = _v0.a;
+	var _v1 = credentials.roomId;
+	var roomId = _v1.a;
+	var _v2 = credentials.playerName;
+	var playerName = _v2.a;
+	return $author$project$Emojigame$sendMessage('reconnect ' + (roomId + (' ' + (playerName + (' ' + secret)))));
+};
+var $elm$browser$Browser$Navigation$replaceUrl = _Browser_replaceUrl;
+var $elm$core$Debug$toString = _Debug_toString;
+var $author$project$PlayingScreen$ConfirmKick = function (a) {
+	return {$: 'ConfirmKick', a: a};
+};
+var $author$project$PlayingScreen$EmojiMsg = function (a) {
+	return {$: 'EmojiMsg', a: a};
+};
+var $author$project$PlayingScreen$WsCmd = function (a) {
+	return {$: 'WsCmd', a: a};
+};
+var $author$project$PlayingScreen$sendMessage = A2($elm$core$Basics$composeL, $elm$core$Maybe$Just, $author$project$PlayingScreen$WsCmd);
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$EmojiPicker$EmojiPicker$update = F2(
 	function (msg, model) {
@@ -5881,208 +5943,365 @@ var $author$project$EmojiPicker$EmojiPicker$update = F2(
 				return _Utils_Tuple2(newModel, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Main$updateRoom = F2(
-	function (msg, roomModel) {
-		switch (msg.$) {
-			case 'UpdateSubmission':
-				var text = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						roomModel,
-						{submission: text}),
-					$elm$core$Platform$Cmd$none);
-			case 'Submit':
-				return _Utils_Tuple2(
-					_Utils_update(
-						roomModel,
-						{submission: ''}),
-					$author$project$Main$sendMessage(
-						'submit ' + $author$project$Main$cleanSubmission(roomModel.submission)));
-			case 'FinishTurn':
-				if (msg.a.$ === 'Nope') {
-					var _v1 = msg.a;
-					return _Utils_Tuple2(
-						roomModel,
-						$author$project$Main$sendMessage('finish'));
-				} else {
-					var name = msg.a.a;
-					return _Utils_Tuple2(
-						roomModel,
-						$author$project$Main$sendMessage('finish ' + name));
-				}
-			case 'EmojiMsg':
-				var subMsg = msg.a;
-				switch (subMsg.$) {
-					case 'Select':
-						var s = subMsg.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								roomModel,
-								{
-									submission: _Utils_ap(roomModel.submission, s)
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 'Toggle':
-						return _Utils_Tuple2(roomModel, $elm$core$Platform$Cmd$none);
-					default:
-						var _v3 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, roomModel.emojiPicker);
-						var m = _v3.a;
-						var c = _v3.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								roomModel,
-								{emojiPicker: m}),
-							A2($elm$core$Platform$Cmd$map, $author$project$Main$EmojiMsg, c));
-				}
-			case 'KickPlayer':
-				var player = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						roomModel,
-						{
-							playerToBeKicked: $elm$core$Maybe$Just(player)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'KickPlayerConfirm':
-				var confirm = msg.a;
-				var _v4 = roomModel.playerToBeKicked;
-				if (_v4.$ === 'Nothing') {
-					return _Utils_Tuple2(roomModel, $elm$core$Platform$Cmd$none);
-				} else {
-					var player = _v4.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							roomModel,
-							{playerToBeKicked: $elm$core$Maybe$Nothing}),
-						confirm ? $author$project$Main$sendMessage('kick ' + player.name) : $elm$core$Platform$Cmd$none);
-				}
-			case 'SkipTurn':
-				return _Utils_Tuple2(
-					roomModel,
-					$author$project$Main$sendMessage('skip'));
-			default:
-				return _Utils_Tuple2(roomModel, $elm$core$Platform$Cmd$none);
-		}
+var $author$project$PlayingScreen$updateGame = F2(
+	function (model, game) {
+		return _Utils_update(
+			model,
+			{
+				game: game,
+				phase: A2(
+					$elm$core$Debug$log,
+					'phase: ',
+					A2($author$project$PlayingScreen$currentScreen, game, model.credentials))
+			});
 	});
-var $author$project$Main$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 'ReceiveWs':
-				var wsMsgJson = msg.a;
-				return _Utils_Tuple2(
-					A2($author$project$Main$onWsMsg, model, wsMsgJson),
-					$elm$core$Platform$Cmd$none);
-			case 'DisconnectedWs':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{page: $author$project$Main$Disconnected}),
-					$elm$core$Platform$Cmd$none);
-			case 'ConnectedWs':
-				var _v1 = model.secret;
-				if (_v1.$ === 'Nothing') {
-					return _Utils_Tuple2(
+var $author$project$PlayingScreen$update = F2(
+	function (model, msg) {
+		var _v0 = _Utils_Tuple2(msg, model.phase);
+		_v0$8:
+		while (true) {
+			switch (_v0.a.$) {
+				case 'UpdateGame':
+					var game = _v0.a.a;
+					return _Utils_Tuple3(
+						A2($author$project$PlayingScreen$updateGame, model, game),
+						$elm$core$Platform$Cmd$none,
+						$elm$core$Maybe$Nothing);
+				case 'UpdateSubmission':
+					if (_v0.b.$ === 'Write') {
+						var submission = _v0.a.a;
+						return _Utils_Tuple3(
+							_Utils_update(
+								model,
+								{
+									phase: $author$project$PlayingScreen$Write(submission)
+								}),
+							$elm$core$Platform$Cmd$none,
+							$elm$core$Maybe$Nothing);
+					} else {
+						break _v0$8;
+					}
+				case 'Submit':
+					if (_v0.b.$ === 'Write') {
+						var _v1 = _v0.a;
+						var submission = _v0.b.a;
+						return _Utils_Tuple3(
+							_Utils_update(
+								model,
+								{phase: $author$project$PlayingScreen$Wait}),
+							$elm$core$Platform$Cmd$none,
+							$author$project$PlayingScreen$sendMessage('submit ' + submission));
+					} else {
+						break _v0$8;
+					}
+				case 'FinishTurn':
+					if (_v0.b.$ === 'Guess') {
+						var finishingVote = _v0.a.a;
+						var _v2 = _v0.b;
+						return _Utils_Tuple3(
+							model,
+							$elm$core$Platform$Cmd$none,
+							$author$project$PlayingScreen$sendMessage('finish'));
+					} else {
+						break _v0$8;
+					}
+				case 'EmojiMsg':
+					var subMsg = _v0.a.a;
+					var phase = _v0.b;
+					switch (subMsg.$) {
+						case 'Select':
+							var s = subMsg.a;
+							if (phase.$ === 'Write') {
+								var submission = phase.a;
+								return _Utils_Tuple3(
+									_Utils_update(
+										model,
+										{
+											phase: $author$project$PlayingScreen$Write(
+												_Utils_ap(submission, s))
+										}),
+									$elm$core$Platform$Cmd$none,
+									$elm$core$Maybe$Nothing);
+							} else {
+								return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Maybe$Nothing);
+							}
+						case 'Toggle':
+							return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Maybe$Nothing);
+						default:
+							var _v5 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, model.emojiPicker);
+							var m = _v5.a;
+							var c = _v5.b;
+							return _Utils_Tuple3(
+								_Utils_update(
+									model,
+									{emojiPicker: m}),
+								A2($elm$core$Platform$Cmd$map, $author$project$PlayingScreen$EmojiMsg, c),
+								$elm$core$Maybe$Nothing);
+					}
+				case 'KickPlayer':
+					var player = _v0.a.a;
+					return _Utils_Tuple3(
 						_Utils_update(
 							model,
 							{
-								page: $author$project$Main$Lobby($author$project$Main$initLobby)
+								phase: $author$project$PlayingScreen$ConfirmKick(player)
 							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					var secret = _v1.a;
-					return _Utils_Tuple2(
-						model,
-						$author$project$Main$sendMessage('reconnect ' + secret));
-				}
-			case 'GeneratedRandomSecret':
-				var randomVal = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							randomVal: $elm$core$Maybe$Just(randomVal)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'UpdateLobbyPlayerName':
-				var name = msg.a;
-				return A2(
-					$author$project$Main$ifInLobby,
-					model,
-					function (lobbyModel) {
-						return _Utils_Tuple2(
+						$elm$core$Platform$Cmd$none,
+						$elm$core$Maybe$Nothing);
+				case 'KickPlayerConfirm':
+					if (_v0.b.$ === 'ConfirmKick') {
+						var confirm = _v0.a.a;
+						var player = _v0.b.a;
+						var _v6 = player.name;
+						var playerName = _v6.a;
+						return _Utils_Tuple3(
 							_Utils_update(
-								lobbyModel,
-								{playerName: name}),
-							$elm$core$Platform$Cmd$none);
-					});
-			case 'UpdateLobbyRoomName':
-				var name = msg.a;
-				return A2(
-					$author$project$Main$ifInLobby,
-					model,
-					function (lobbyModel) {
-						return _Utils_Tuple2(
-							_Utils_update(
-								lobbyModel,
-								{roomName: name}),
-							$elm$core$Platform$Cmd$none);
-					});
-			case 'JoinRoom':
-				var _v2 = model.page;
-				if (_v2.$ === 'Lobby') {
-					var lobbyModel = _v2.a;
-					if ((!$elm$core$String$length(lobbyModel.roomName)) || (!$elm$core$String$length(lobbyModel.playerName))) {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+								model,
+								{
+									phase: A2($author$project$PlayingScreen$currentScreen, model.game, model.credentials)
+								}),
+							$elm$core$Platform$Cmd$none,
+							confirm ? $author$project$PlayingScreen$sendMessage('kick ' + playerName) : $elm$core$Maybe$Nothing);
 					} else {
-						var _v3 = model.randomVal;
-						if (_v3.$ === 'Just') {
-							var randomVal = _v3.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										secret: $elm$core$Maybe$Just(randomVal)
-									}),
-								$author$project$Main$sendMessage('join ' + (lobbyModel.roomName + (' ' + (lobbyModel.playerName + (' ' + randomVal))))));
-						} else {
-							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-						}
+						break _v0$8;
 					}
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			default:
-				var _v4 = model.page;
-				switch (_v4.$) {
-					case 'Lobby':
-						var lobbyModel = _v4.a;
-						var _v5 = A2($author$project$Main$updateLobby, msg, lobbyModel);
-						var newLobbyModel = _v5.a;
-						var cmd = _v5.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$Lobby(newLobbyModel)
-								}),
-							cmd);
-					case 'Room':
-						var roomModel = _v4.a;
-						var _v6 = A2($author$project$Main$updateRoom, msg, roomModel);
-						var newRoomModel = _v6.a;
-						var cmd = _v6.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$Room(newRoomModel)
-								}),
-							cmd);
-					default:
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
+				default:
+					var _v7 = _v0.a;
+					return _Utils_Tuple3(
+						model,
+						$elm$core$Platform$Cmd$none,
+						$author$project$PlayingScreen$sendMessage('skip'));
+			}
 		}
+		return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Maybe$Nothing);
 	});
+var $author$project$Emojigame$update = F2(
+	function (msg, model) {
+		var updatePage = function (page) {
+			return _Utils_update(
+				model,
+				{page: page});
+		};
+		var _v0 = _Utils_Tuple2(msg, model.page);
+		_v0$15:
+		while (true) {
+			switch (_v0.a.$) {
+				case 'UrlChanged':
+					var url = _v0.a.a;
+					var page = _v0.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{currentUrl: url}),
+						$elm$core$Platform$Cmd$none);
+				case 'WritePlayerName':
+					switch (_v0.b.$) {
+						case 'CreatingScreen':
+							var name = _v0.a.a;
+							var _v4 = _v0.b;
+							var settings = _v4.a;
+							var playerName = _v4.b;
+							return _Utils_Tuple2(
+								updatePage(
+									A2(
+										$author$project$Emojigame$CreatingScreen,
+										settings,
+										$author$project$Game$PlayerName(name))),
+								$elm$core$Platform$Cmd$none);
+						case 'JoiningScreen':
+							var name = _v0.a.a;
+							var _v10 = _v0.b;
+							var roomId = _v10.a;
+							var playerName = _v10.b;
+							return _Utils_Tuple2(
+								updatePage(
+									A2(
+										$author$project$Emojigame$JoiningScreen,
+										roomId,
+										$author$project$Game$PlayerName(name))),
+								$elm$core$Platform$Cmd$none);
+						default:
+							break _v0$15;
+					}
+				case 'JoinRoom':
+					switch (_v0.b.$) {
+						case 'CreatingScreen':
+							var _v5 = _v0.a;
+							var _v6 = _v0.b;
+							var settings = _v6.a;
+							var playerName = _v6.b;
+							return _Utils_Tuple2(
+								updatePage(
+									A2($author$project$Emojigame$Creating, settings, playerName)),
+								A2($author$project$Emojigame$createRoom, settings, playerName));
+						case 'JoiningScreen':
+							var _v11 = _v0.a;
+							var _v12 = _v0.b;
+							var roomId = _v12.a;
+							var playerName = _v12.b;
+							return _Utils_Tuple2(
+								updatePage(
+									A2($author$project$Emojigame$Joining, roomId, playerName)),
+								A2($author$project$Emojigame$join, roomId, playerName));
+						default:
+							break _v0$15;
+					}
+				case 'DisconnectedWs':
+					if (_v0.b.$ === 'Playing') {
+						var _v16 = _v0.a;
+						var playingModel = _v0.b.a;
+						return _Utils_Tuple2(
+							updatePage(
+								$author$project$Emojigame$Disconnected(
+									$author$project$Emojigame$Reconnect(playingModel.credentials))),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						break _v0$15;
+					}
+				case 'ConnectedWs':
+					if (_v0.b.$ === 'Disconnected') {
+						switch (_v0.b.a.$) {
+							case 'Create':
+								var _v1 = _v0.a;
+								var _v2 = _v0.b.a;
+								return _Utils_Tuple2(
+									updatePage(
+										A2(
+											$author$project$Emojigame$CreatingScreen,
+											$author$project$Emojigame$defaultSettings,
+											$author$project$Game$PlayerName(''))),
+									$elm$core$Platform$Cmd$none);
+							case 'Join':
+								var _v3 = _v0.a;
+								var roomId = _v0.b.a.a;
+								return _Utils_Tuple2(
+									updatePage(
+										A2(
+											$author$project$Emojigame$JoiningScreen,
+											roomId,
+											$author$project$Game$PlayerName(''))),
+									$elm$core$Platform$Cmd$none);
+							default:
+								var _v17 = _v0.a;
+								var credentials = _v0.b.a.a;
+								return _Utils_Tuple2(
+									updatePage(
+										$author$project$Emojigame$Disconnected(
+											$author$project$Emojigame$Reconnect(credentials))),
+									$author$project$Emojigame$reconnect(credentials));
+						}
+					} else {
+						break _v0$15;
+					}
+				case 'ReceiveWs':
+					switch (_v0.b.$) {
+						case 'Creating':
+							if (_v0.a.a.$ === 'Joined') {
+								var _v7 = _v0.a.a;
+								var game = _v7.a;
+								var secret = _v7.b;
+								var _v8 = _v0.b;
+								var settings = _v8.a;
+								var playerName = _v8.b;
+								var credentials = {playerName: playerName, roomId: game.id, secret: secret};
+								var _v9 = game.id;
+								var roomId = _v9.a;
+								return _Utils_Tuple2(
+									updatePage(
+										$author$project$Emojigame$Playing(
+											A3(
+												$author$project$PlayingScreen$init,
+												credentials,
+												game,
+												_Utils_ap(
+													$author$project$Emojigame$makeLink(model.currentUrl),
+													roomId)))),
+									A2($elm$browser$Browser$Navigation$replaceUrl, model.navKey, roomId));
+							} else {
+								break _v0$15;
+							}
+						case 'Joining':
+							if (_v0.a.a.$ === 'Joined') {
+								var _v13 = _v0.a.a;
+								var game = _v13.a;
+								var secret = _v13.b;
+								var _v14 = _v0.b;
+								var playerName = _v14.b;
+								var credentials = {playerName: playerName, roomId: game.id, secret: secret};
+								return _Utils_Tuple2(
+									updatePage(
+										$author$project$Emojigame$Playing(
+											A3(
+												$author$project$PlayingScreen$init,
+												credentials,
+												game,
+												$author$project$Emojigame$makeLink(model.currentUrl)))),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								var _v15 = _v0.b;
+								return _Utils_Tuple2(
+									updatePage(model.page),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 'Disconnected':
+							if ((_v0.a.a.$ === 'GameState') && (_v0.b.a.$ === 'Reconnect')) {
+								var game = _v0.a.a.a;
+								var credentials = _v0.b.a.a;
+								return _Utils_Tuple2(
+									updatePage(
+										$author$project$Emojigame$Playing(
+											A3(
+												$author$project$PlayingScreen$init,
+												credentials,
+												game,
+												$author$project$Emojigame$makeLink(model.currentUrl)))),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								break _v0$15;
+							}
+						case 'Playing':
+							if (_v0.a.a.$ === 'GameState') {
+								var game = _v0.a.a.a;
+								var playingModel = _v0.b.a;
+								return A2(
+									$elm$core$Tuple$mapFirst,
+									updatePage,
+									$author$project$Emojigame$mapPlayingUpdate(
+										A2(
+											$author$project$PlayingScreen$update,
+											playingModel,
+											$author$project$PlayingScreen$UpdateGame(game))));
+							} else {
+								break _v0$15;
+							}
+						default:
+							break _v0$15;
+					}
+				case 'PlayingMsg':
+					if (_v0.b.$ === 'Playing') {
+						var playingMsg = _v0.a.a;
+						var playingModel = _v0.b.a;
+						return A2(
+							$elm$core$Tuple$mapFirst,
+							updatePage,
+							$author$project$Emojigame$mapPlayingUpdate(
+								A2($author$project$PlayingScreen$update, playingModel, playingMsg)));
+					} else {
+						break _v0$15;
+					}
+				default:
+					break _v0$15;
+			}
+		}
+		var anyOther = _v0;
+		return _Utils_Tuple2(
+			updatePage(
+				$author$project$Emojigame$Error(
+					'Invalid Msg: ' + $elm$core$Debug$toString(
+						A2($elm$core$Debug$log, 'msg: ', anyOther)))),
+			$elm$core$Platform$Cmd$none);
+	});
+var $elm$json$Json$Decode$value = _Json_decodeValue;
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6092,26 +6311,13 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$viewDisconnected = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$id('disconnected')
-		]),
-	_List_fromArray(
-		[
-			$elm$html$Html$text('Trying to reconnect to the server...')
-		]));
-var $author$project$Main$JoinRoom = {$: 'JoinRoom'};
-var $author$project$Main$UpdateLobbyPlayerName = function (a) {
-	return {$: 'UpdateLobbyPlayerName', a: a};
-};
-var $author$project$Main$UpdateLobbyRoomName = function (a) {
-	return {$: 'UpdateLobbyRoomName', a: a};
+var $author$project$Emojigame$JoinRoom = {$: 'JoinRoom'};
+var $author$project$Emojigame$WritePlayerName = function (a) {
+	return {$: 'WritePlayerName', a: a};
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -6165,116 +6371,89 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$Main$viewLobby = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$id('lobby')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('playerName'),
-						$elm$html$Html$Events$onInput($author$project$Main$UpdateLobbyPlayerName),
-						$elm$html$Html$Attributes$value(model.playerName),
-						$elm$html$Html$Attributes$placeholder('Player Name')
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('roomName'),
-						$elm$html$Html$Events$onInput($author$project$Main$UpdateLobbyRoomName),
-						$elm$html$Html$Attributes$value(model.roomName),
-						$elm$html$Html$Attributes$placeholder('Room Name')
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$JoinRoom)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Join')
-					]))
-			]));
-};
-var $author$project$Main$Write = {$: 'Write'};
-var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $author$project$Main$ConfirmKick = function (a) {
-	return {$: 'ConfirmKick', a: a};
-};
-var $author$project$Main$Guess = {$: 'Guess'};
-var $author$project$Main$Submissions = {$: 'Submissions'};
-var $author$project$Main$Wait = {$: 'Wait'};
-var $mgold$elm_nonempty_list$List$Nonempty$head = function (_v0) {
-	var x = _v0.a;
-	var xs = _v0.b;
-	return x;
-};
-var $author$project$Main$currentTurn = function (game) {
-	return $mgold$elm_nonempty_list$List$Nonempty$head(game.turns);
-};
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
+var $author$project$Emojigame$viewCreating = F2(
+	function (settings, _v0) {
+		var playerName = _v0.a;
 		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$id('lobby')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('playerName'),
+							$elm$html$Html$Events$onInput($author$project$Emojigame$WritePlayerName),
+							$elm$html$Html$Attributes$value(playerName),
+							$elm$html$Html$Attributes$placeholder('Player Name')
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick($author$project$Emojigame$JoinRoom)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Start Game')
+						]))
+				]));
 	});
-var $author$project$Main$hasSubmittedForCurrentTurn = function (roomModel) {
-	return A2(
-		$elm$core$List$member,
-		roomModel.playerName,
-		$elm$core$Dict$keys(
-			$author$project$Main$currentTurn(roomModel.game).submissions));
-};
-var $author$project$Main$iAmTheGuesser = function (roomModel) {
-	return _Utils_eq(
-		$author$project$Main$currentTurn(roomModel.game).guesser,
-		roomModel.playerName);
-};
-var $author$project$Main$currentScreen = function (roomModel) {
-	var _v0 = roomModel.playerToBeKicked;
-	if (_v0.$ === 'Just') {
-		var player = _v0.a;
-		return $author$project$Main$ConfirmKick(player);
-	} else {
-		return $author$project$Main$iAmTheGuesser(roomModel) ? ($author$project$Main$currentTurn(roomModel.game).submissionsComplete ? $author$project$Main$Guess : $author$project$Main$Wait) : ($author$project$Main$currentTurn(roomModel.game).submissionsComplete ? $author$project$Main$Submissions : ($author$project$Main$hasSubmittedForCurrentTurn(roomModel) ? $author$project$Main$Wait : $author$project$Main$Write));
-	}
-};
-var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
-var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
+var $author$project$Emojigame$viewDisconnected = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Connecting to server...')
+		]));
+var $author$project$Emojigame$viewJoining = F2(
+	function (roomId, _v0) {
+		var playerName = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$id('lobby')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('playerName'),
+							$elm$html$Html$Events$onInput($author$project$Emojigame$WritePlayerName),
+							$elm$html$Html$Attributes$value(playerName),
+							$elm$html$Html$Attributes$placeholder('Player Name')
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick($author$project$Emojigame$JoinRoom)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Join')
+						]))
+				]));
+	});
+var $author$project$Emojigame$viewLoading = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Loading...')
+		]));
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Styles$category = _List_fromArray(
 	[
 		A2($elm$html$Html$Attributes$style, 'width', '100%')
@@ -6382,17 +6561,6 @@ var $author$project$EmojiPicker$EmojiPicker$displayEmoji = F2(
 				[
 					$elm$html$Html$text(_native)
 				]));
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -25474,19 +25642,19 @@ var $author$project$EmojiPicker$EmojiPicker$view = function (model) {
 					]))
 			]));
 };
-var $author$project$Main$viewEmojiPicker = function (roomModel) {
+var $author$project$PlayingScreen$viewEmojiPicker = function (model) {
 	return A2(
 		$elm$html$Html$map,
-		$author$project$Main$EmojiMsg,
-		$author$project$EmojiPicker$EmojiPicker$view(roomModel.emojiPicker));
+		$author$project$PlayingScreen$EmojiMsg,
+		$author$project$EmojiPicker$EmojiPicker$view(model));
 };
-var $author$project$Main$SkipTurn = {$: 'SkipTurn'};
+var $author$project$PlayingScreen$SkipTurn = {$: 'SkipTurn'};
 var $mgold$elm_nonempty_list$List$Nonempty$length = function (_v0) {
 	var x = _v0.a;
 	var xs = _v0.b;
 	return $elm$core$List$length(xs) + 1;
 };
-var $author$project$Main$viewInfoDisplay = function (game) {
+var $author$project$PlayingScreen$viewInfoDisplay = function (game) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25507,26 +25675,49 @@ var $author$project$Main$viewInfoDisplay = function (game) {
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick($author$project$Main$SkipTurn)
+								$elm$html$Html$Events$onClick($author$project$PlayingScreen$SkipTurn)
 							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Skip')
 							]))
-					])),
+					]))
+			]));
+};
+var $author$project$PlayingScreen$viewInviteOtherPlayers = function (link) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('invite-players')
+			]),
+		_List_fromArray(
+			[
 				A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(game.name)
+						$elm$html$Html$text('Send your friends this link to invite them to the game:')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('invite-link')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(link)
 					]))
 			]));
 };
-var $author$project$Main$KickPlayerConfirm = function (a) {
+var $author$project$PlayingScreen$KickPlayerConfirm = function (a) {
 	return {$: 'KickPlayerConfirm', a: a};
 };
-var $author$project$Main$viewKickConfirm = function (player) {
+var $author$project$PlayingScreen$viewKickConfirm = function (player) {
+	var _v0 = player.name;
+	var playerName = _v0.a;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25540,7 +25731,7 @@ var $author$project$Main$viewKickConfirm = function (player) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Do you want to throw ' + (player.name + ' out of the game?'))
+						$elm$html$Html$text('Do you want to throw ' + (playerName + ' out of the game?'))
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -25552,7 +25743,7 @@ var $author$project$Main$viewKickConfirm = function (player) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Events$onClick(
-								$author$project$Main$KickPlayerConfirm(true))
+								$author$project$PlayingScreen$KickPlayerConfirm(true))
 							]),
 						_List_fromArray(
 							[
@@ -25563,7 +25754,7 @@ var $author$project$Main$viewKickConfirm = function (player) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Events$onClick(
-								$author$project$Main$KickPlayerConfirm(false))
+								$author$project$PlayingScreen$KickPlayerConfirm(false))
 							]),
 						_List_fromArray(
 							[
@@ -25572,11 +25763,11 @@ var $author$project$Main$viewKickConfirm = function (player) {
 					]))
 			]));
 };
-var $author$project$Main$Submit = {$: 'Submit'};
-var $author$project$Main$UpdateSubmission = function (a) {
+var $author$project$PlayingScreen$Submit = {$: 'Submit'};
+var $author$project$PlayingScreen$UpdateSubmission = function (a) {
 	return {$: 'UpdateSubmission', a: a};
 };
-var $author$project$Main$viewPhrase = function (turn) {
+var $author$project$PlayingScreen$viewPhrase = function (turn) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25588,60 +25779,61 @@ var $author$project$Main$viewPhrase = function (turn) {
 				$elm$html$Html$text(turn.phrase)
 			]));
 };
-var $author$project$Main$viewSubmissionForm = function (roomModel) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$id('submission-form-container')
-			]),
-		_List_fromArray(
-			[
-				$author$project$Main$viewPhrase(
-				$author$project$Main$currentTurn(roomModel.game)),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('submission-form')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onInput($author$project$Main$UpdateSubmission),
-								$elm$html$Html$Attributes$placeholder('My Submission'),
-								$elm$html$Html$Attributes$value(roomModel.submission)
-							]),
-						_List_Nil),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Main$Submit)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Submit')
-							]))
-					]))
-			]));
-};
+var $author$project$PlayingScreen$viewSubmissionForm = F2(
+	function (model, submission) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$id('submission-form-container')
+				]),
+			_List_fromArray(
+				[
+					$author$project$PlayingScreen$viewPhrase(
+					$author$project$PlayingScreen$currentTurn(model.game)),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('submission-form')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onInput($author$project$PlayingScreen$UpdateSubmission),
+									$elm$html$Html$Attributes$placeholder('My Submission'),
+									$elm$html$Html$Attributes$value(submission)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$PlayingScreen$Submit)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Submit')
+								]))
+						]))
+				]));
+	});
 var $elm$html$Html$li = _VirtualDom_node('li');
 var $elm$html$Html$ul = _VirtualDom_node('ul');
-var $elm$core$Dict$values = function (dict) {
-	return A3(
-		$elm$core$Dict$foldr,
-		F3(
-			function (key, value, valueList) {
-				return A2($elm$core$List$cons, value, valueList);
-			}),
-		_List_Nil,
-		dict);
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
 };
-var $author$project$Main$viewSubmissions = function (turn) {
+var $pzp1997$assoc_list$AssocList$values = function (_v0) {
+	var alist = _v0.a;
+	return A2($elm$core$List$map, $elm$core$Tuple$second, alist);
+};
+var $author$project$PlayingScreen$viewSubmissions = function (turn) {
+	var _v0 = turn.guesser;
+	var guesserName = _v0.a;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25671,24 +25863,28 @@ var $author$project$Main$viewSubmissions = function (turn) {
 									$elm$html$Html$text(s)
 								]));
 					},
-					$elm$core$Dict$values(turn.submissions))),
+					$pzp1997$assoc_list$AssocList$values(turn.submissions))),
 				A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Wait for ' + (turn.guesser + ' to guess.'))
+						$elm$html$Html$text('Wait for ' + (guesserName + ' to guess.'))
 					]))
 			]));
 };
-var $author$project$Main$Best = function (a) {
+var $author$project$PlayingScreen$Best = function (a) {
 	return {$: 'Best', a: a};
 };
-var $author$project$Main$FinishTurn = function (a) {
+var $author$project$PlayingScreen$FinishTurn = function (a) {
 	return {$: 'FinishTurn', a: a};
 };
-var $author$project$Main$Nope = {$: 'Nope'};
-var $author$project$Main$viewVotingButtons = function (turn) {
+var $author$project$PlayingScreen$Nope = {$: 'Nope'};
+var $pzp1997$assoc_list$AssocList$toList = function (_v0) {
+	var alist = _v0.a;
+	return alist;
+};
+var $author$project$PlayingScreen$viewVotingButtons = function (turn) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25703,28 +25899,29 @@ var $author$project$Main$viewVotingButtons = function (turn) {
 				A2(
 					$elm$core$List$map,
 					function (_v0) {
-						var k = _v0.a;
+						var k = _v0.a.a;
 						var v = _v0.b;
 						return A2(
 							$elm$html$Html$li,
 							_List_fromArray(
 								[
 									$elm$html$Html$Events$onClick(
-									$author$project$Main$FinishTurn(
-										$author$project$Main$Best(k)))
+									$author$project$PlayingScreen$FinishTurn(
+										$author$project$PlayingScreen$Best(k)))
 								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text(v)
 								]));
 					},
-					$elm$core$Dict$toList(turn.submissions))),
+					$pzp1997$assoc_list$AssocList$toList(turn.submissions))),
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$id('vote-nope'),
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$FinishTurn($author$project$Main$Nope))
+						$author$project$PlayingScreen$FinishTurn($author$project$PlayingScreen$Nope))
 					]),
 				_List_fromArray(
 					[
@@ -25732,14 +25929,17 @@ var $author$project$Main$viewVotingButtons = function (turn) {
 					])),
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('vote-help')
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Did you get it? Talk to the other players. Then choose who did the best job or click \uD83E\uDD37 if you didn\'t guess it right.')
 					]))
 			]));
 };
-var $author$project$Main$viewSubmissionsForGuesser = function (turn) {
+var $author$project$PlayingScreen$viewSubmissionsForGuesser = function (turn) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25748,10 +25948,10 @@ var $author$project$Main$viewSubmissionsForGuesser = function (turn) {
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$viewVotingButtons(turn)
+				$author$project$PlayingScreen$viewVotingButtons(turn)
 			]));
 };
-var $author$project$Main$viewWaitForSubmissions = function (_v0) {
+var $author$project$PlayingScreen$viewWaitForSubmissions = function (_v0) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25763,31 +25963,34 @@ var $author$project$Main$viewWaitForSubmissions = function (_v0) {
 				$elm$html$Html$text('Waiting for the other players')
 			]));
 };
-var $author$project$Main$viewMainWindow = function (roomModel) {
-	var _v0 = $author$project$Main$currentScreen(roomModel);
+var $author$project$PlayingScreen$viewMainWindow = function (model) {
+	var _v0 = model.phase;
 	switch (_v0.$) {
+		case 'Invite':
+			return $author$project$PlayingScreen$viewInviteOtherPlayers(model.link);
 		case 'Wait':
-			return $author$project$Main$viewWaitForSubmissions(roomModel.game);
+			return $author$project$PlayingScreen$viewWaitForSubmissions(model.game);
 		case 'Write':
-			return $author$project$Main$viewSubmissionForm(roomModel);
+			var submission = _v0.a;
+			return A2($author$project$PlayingScreen$viewSubmissionForm, model, submission);
 		case 'Submissions':
-			return $author$project$Main$viewSubmissions(
-				$author$project$Main$currentTurn(roomModel.game));
+			return $author$project$PlayingScreen$viewSubmissions(
+				$author$project$PlayingScreen$currentTurn(model.game));
 		case 'Guess':
-			return $author$project$Main$viewSubmissionsForGuesser(
-				$author$project$Main$currentTurn(roomModel.game));
+			return $author$project$PlayingScreen$viewSubmissionsForGuesser(
+				$author$project$PlayingScreen$currentTurn(model.game));
 		default:
 			var player = _v0.a;
-			return $author$project$Main$viewKickConfirm(player);
+			return $author$project$PlayingScreen$viewKickConfirm(player);
 	}
 };
-var $author$project$Main$KickPlayer = function (a) {
+var $author$project$PlayingScreen$KickPlayer = function (a) {
 	return {$: 'KickPlayer', a: a};
 };
-var $author$project$Main$isTheGuesser = F2(
+var $author$project$PlayingScreen$isTheGuesser = F2(
 	function (game, player) {
 		return _Utils_eq(
-			$author$project$Main$currentTurn(game).guesser,
+			$author$project$PlayingScreen$currentTurn(game).guesser,
 			player.name);
 	});
 var $elm$core$List$head = function (list) {
@@ -25804,7 +26007,7 @@ var $mgold$elm_nonempty_list$List$Nonempty$tail = function (_v0) {
 	var xs = _v0.b;
 	return xs;
 };
-var $author$project$Main$playerGotPointLastTurn = F2(
+var $author$project$PlayingScreen$playerGotPointLastTurn = F2(
 	function (game, player) {
 		var _v0 = $elm$core$List$head(
 			$mgold$elm_nonempty_list$List$Nonempty$tail(game.turns));
@@ -25821,27 +26024,29 @@ var $author$project$Main$playerGotPointLastTurn = F2(
 			}
 		}
 	});
-var $author$project$Main$playerHasSubmitted = F2(
+var $author$project$PlayingScreen$playerHasSubmitted = F2(
 	function (game, player) {
 		return A2(
 			$elm$core$List$member,
 			player.name,
-			$elm$core$Dict$keys(
-				$author$project$Main$currentTurn(game).submissions));
+			$pzp1997$assoc_list$AssocList$keys(
+				$author$project$PlayingScreen$currentTurn(game).submissions));
 	});
-var $author$project$Main$viewPlayer = F2(
-	function (roomModel, player) {
+var $author$project$PlayingScreen$viewPlayer = F2(
+	function (model, player) {
+		var _v0 = player.name;
+		var playerName = _v0.a;
 		return A2(
 			$elm$html$Html$li,
 			_Utils_ap(
-				_Utils_eq(player.name, roomModel.playerName) ? _List_fromArray(
+				_Utils_eq(player.name, model.credentials.playerName) ? _List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('player-self')
 					]) : _List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$KickPlayer(player))
+						$author$project$PlayingScreen$KickPlayer(player))
 					])),
 			_List_fromArray(
 				[
@@ -25854,7 +26059,7 @@ var $author$project$Main$viewPlayer = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($author$project$Main$isTheGuesser, roomModel.game, player) ? '🕵️\u200D♂️' : ((!A2($author$project$Main$playerHasSubmitted, roomModel.game, player)) ? '⏳' : ''))
+							A2($author$project$PlayingScreen$isTheGuesser, model.game, player) ? '🕵️\u200D♂️' : ((!A2($author$project$PlayingScreen$playerHasSubmitted, model.game, player)) ? '⏳' : ''))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -25869,7 +26074,7 @@ var $author$project$Main$viewPlayer = F2(
 							])),
 					_List_fromArray(
 						[
-							$elm$html$Html$text(player.name)
+							$elm$html$Html$text(playerName)
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -25880,7 +26085,7 @@ var $author$project$Main$viewPlayer = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							A2($author$project$Main$playerGotPointLastTurn, roomModel.game, player) ? '\uD83E\uDD47' : ((!player.active) ? '😴' : ''))
+							A2($author$project$PlayingScreen$playerGotPointLastTurn, model.game, player) ? '\uD83E\uDD47' : ((!player.active) ? '😴' : ''))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -25895,7 +26100,7 @@ var $author$project$Main$viewPlayer = F2(
 						]))
 				]));
 	});
-var $author$project$Main$viewPlayerList = function (roomModel) {
+var $author$project$PlayingScreen$viewPlayerList = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -25909,11 +26114,11 @@ var $author$project$Main$viewPlayerList = function (roomModel) {
 				_List_Nil,
 				A2(
 					$elm$core$List$map,
-					$author$project$Main$viewPlayer(roomModel),
-					roomModel.game.players))
+					$author$project$PlayingScreen$viewPlayer(model),
+					model.game.players))
 			]));
 };
-var $author$project$Main$viewRoom = function (roomModel) {
+var $author$project$PlayingScreen$viewPlaying = function (model) {
 	return A2(
 		$elm$html$Html$div,
 		_Utils_ap(
@@ -25921,12 +26126,17 @@ var $author$project$Main$viewRoom = function (roomModel) {
 				[
 					$elm$html$Html$Attributes$id('room')
 				]),
-			_Utils_eq(
-				$author$project$Main$currentScreen(roomModel),
-				$author$project$Main$Write) ? _List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('write-mode')
-				]) : _List_Nil),
+			function () {
+				var _v0 = model.phase;
+				if (_v0.$ === 'Write') {
+					return _List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('write-mode')
+						]);
+				} else {
+					return _List_Nil;
+				}
+			}()),
 		_List_fromArray(
 			[
 				A2(
@@ -25937,8 +26147,8 @@ var $author$project$Main$viewRoom = function (roomModel) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$viewPlayerList(roomModel),
-						$author$project$Main$viewInfoDisplay(roomModel.game)
+						$author$project$PlayingScreen$viewPlayerList(model),
+						$author$project$PlayingScreen$viewInfoDisplay(model.game)
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -25948,7 +26158,7 @@ var $author$project$Main$viewRoom = function (roomModel) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$viewMainWindow(roomModel)
+						$author$project$PlayingScreen$viewMainWindow(model)
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -25959,54 +26169,65 @@ var $author$project$Main$viewRoom = function (roomModel) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$viewEmojiPicker(roomModel)
+						$author$project$PlayingScreen$viewEmojiPicker(model.emojiPicker)
 					]))
 			]));
 };
-var $author$project$Main$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
+var $author$project$Emojigame$view = function (model) {
+	return {
+		body: _List_fromArray(
 			[
-				$elm$html$Html$Attributes$id('container')
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('container')
+					]),
+				_List_fromArray(
+					[
+						function () {
+						var _v0 = model.page;
+						switch (_v0.$) {
+							case 'Disconnected':
+								return $author$project$Emojigame$viewDisconnected;
+							case 'CreatingScreen':
+								var settings = _v0.a;
+								var playerName = _v0.b;
+								return A2($author$project$Emojigame$viewCreating, settings, playerName);
+							case 'Creating':
+								var settings = _v0.a;
+								var playerName = _v0.b;
+								return $author$project$Emojigame$viewLoading;
+							case 'JoiningScreen':
+								var roomId = _v0.a;
+								var playerName = _v0.b;
+								return A2($author$project$Emojigame$viewJoining, roomId, playerName);
+							case 'Joining':
+								var roomId = _v0.a;
+								var playerName = _v0.b;
+								return $author$project$Emojigame$viewLoading;
+							case 'Playing':
+								var playingModel = _v0.a;
+								return A2(
+									$elm$html$Html$map,
+									$author$project$Emojigame$PlayingMsg,
+									$author$project$PlayingScreen$viewPlaying(playingModel));
+							default:
+								var msg = _v0.a;
+								return A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(msg)
+										]));
+						}
+					}()
+					]))
 			]),
-		_Utils_ap(
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'color', 'red')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(model.errorMsg)
-						]))
-				]),
-			_List_fromArray(
-				[
-					function () {
-					var _v0 = model.page;
-					switch (_v0.$) {
-						case 'Lobby':
-							var lobbyModel = _v0.a;
-							return $author$project$Main$viewLobby(lobbyModel);
-						case 'Room':
-							var roomModel = _v0.a;
-							return $author$project$Main$viewRoom(roomModel);
-						default:
-							return $author$project$Main$viewDisconnected;
-					}
-				}()
-				])));
+		title: 'Emojigame'
+	};
 };
-var $author$project$Main$main = $elm$browser$Browser$element(
-	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
-_Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, $elm$json$Json$Decode$string)
-			])))(0)}});}(this));
+var $author$project$Emojigame$main = $elm$browser$Browser$application(
+	{init: $author$project$Emojigame$init, onUrlChange: $author$project$Emojigame$UrlChanged, onUrlRequest: $author$project$Emojigame$UrlRequested, subscriptions: $author$project$Emojigame$subscriptions, update: $author$project$Emojigame$update, view: $author$project$Emojigame$view});
+_Platform_export({'Emojigame':{'init':$author$project$Emojigame$main($elm$json$Json$Decode$value)(0)}});}(this));

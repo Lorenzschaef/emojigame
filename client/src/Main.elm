@@ -39,39 +39,14 @@ main =
 
 
 type alias Model =
-    { page : Page
-    , errorMsg : String
+    { errorMsg : String
     , lastWsMsg : String
-    , secret : Maybe String
-    , randomVal : Maybe String
-    }
-
-
-type Page
-    = Lobby LobbyModel
-    | Room RoomModel
-    | Disconnected
-
-
-type alias LobbyModel =
-    { roomName : String
-    , playerName : String
-    }
-
-
-type alias DisconnectedModel =
-    { roomName : String
-    , playerName : String
-    }
-
-
-type alias RoomModel =
-    { roomName : String
-    , playerName : String
+    , credentials : Credentials
     , game : Game
     , submission : String
     , emojiPicker : EmojiPicker.Model
     , playerToBeKicked : Maybe Player
+    , connected : Bool
     }
 
 
@@ -154,30 +129,65 @@ turnDecoder =
         |> required "bestSubmissionPlayerName" (maybe string)
 
 
-init : Maybe String -> ( Model, Cmd Msg )
-init secret =
-    ( { page = Disconnected
-      , errorMsg = ""
-      , lastWsMsg = ""
-      , secret = secret
-      , randomVal = Nothing
-      }
-    , Random.generate GeneratedRandomSecret (Random.map String.fromInt (Random.int Random.minInt Random.maxInt))
-    )
-
-
-initLobby : LobbyModel
-initLobby =
-    { roomName = ""
-    , playerName = ""
+type alias Credentials =
+    { playerName : String
+    , roomName : String
+    , secret : String
     }
 
 
-type Msg
-    = UpdateLobbyPlayerName String
-    | UpdateLobbyRoomName String
-    | JoinRoom
-    | UpdateSubmission String
+init : Credentials -> ( Model, Cmd Msg )
+init credentials =
+    ( { game = fakeGame credentials
+      , errorMsg = ""
+      , lastWsMsg = ""
+      , credentials = credentials
+      , submission = ""
+      , emojiPicker = initEmojiPicker
+      , playerToBeKicked = Nothing
+      , connected = False
+      }
+    , joinCmd credentials
+    )
+
+
+fakeGame : Credentials -> Game
+fakeGame credentials =
+    { players = []
+    , name = credentials.roomName
+    , turns = NE.fromElement fakeTurn
+    }
+
+
+fakeTurn : Turn
+fakeTurn =
+    { phrase = ""
+    , submissions = Dict.empty
+    , guesser = ""
+    , submissionsComplete = False
+    , bestSubmissionPlayerName = Nothing
+    }
+
+
+joinCmd : Credentials -> Cmd msg
+joinCmd credentials =
+    sendMessage <| "join " ++ credentials.roomName ++ " " ++ credentials.playerName ++ " " ++ credentials.secret
+
+
+
+--initLobby : LobbyModel
+--initLobby =
+--    { roomName = ""
+--    , playerName = ""
+--    }
+
+
+type
+    Msg
+    --= UpdateLobbyPlayerName String
+    --| UpdateLobbyRoomName String
+    --| JoinRoom
+    = UpdateSubmission String
     | Submit
     | ReceiveWs String
     | DisconnectedWs
@@ -187,7 +197,6 @@ type Msg
     | KickPlayer Player
     | KickPlayerConfirm Bool
     | SkipTurn
-    | GeneratedRandomSecret String
 
 
 type FinishingVote
@@ -206,118 +215,48 @@ update msg model =
             ( onWsMsg model wsMsgJson, Cmd.none )
 
         DisconnectedWs ->
-            ( { model | page = Disconnected }, Cmd.none )
+            ( { model | connected = False }, Cmd.none )
 
         ConnectedWs ->
-            case model.secret of
-                Nothing ->
-                    ( { model | page = Lobby initLobby }, Cmd.none )
+            ( { model | connected = True }, joinCmd model.credentials )
 
-                Just secret ->
-                    ( model, sendMessage ("reconnect " ++ secret) )
-
-        GeneratedRandomSecret randomVal ->
-            ( { model | randomVal = Just randomVal }, Cmd.none )
-
-        UpdateLobbyPlayerName name ->
-            ifInLobby model (\lobbyModel -> ( { lobbyModel | playerName = name }, Cmd.none ))
-
-        UpdateLobbyRoomName name ->
-            ifInLobby model (\lobbyModel -> ( { lobbyModel | roomName = name }, Cmd.none ))
-
-        JoinRoom ->
-            case model.page of
-                Lobby lobbyModel ->
-                    if (String.length lobbyModel.roomName == 0) || (String.length lobbyModel.playerName == 0) then
-                        ( model, Cmd.none )
-
-                    else
-                        case model.randomVal of
-                            Just randomVal ->
-                                ( { model | secret = Just randomVal }
-                                , sendMessage <| "join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " " ++ randomVal
-                                )
-
-                            Nothing ->
-                                ( model, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
-
-        _ ->
-            case model.page of
-                Lobby lobbyModel ->
-                    let
-                        ( newLobbyModel, cmd ) =
-                            updateLobby msg lobbyModel
-                    in
-                    ( { model | page = Lobby newLobbyModel }, cmd )
-
-                Room roomModel ->
-                    let
-                        ( newRoomModel, cmd ) =
-                            updateRoom msg roomModel
-                    in
-                    ( { model | page = Room newRoomModel }, cmd )
-
-                _ ->
-                    ( model, Cmd.none )
-
-
-ifInLobby : Model -> (LobbyModel -> ( LobbyModel, Cmd msg )) -> ( Model, Cmd msg )
-ifInLobby model func =
-    case model.page of
-        Lobby lobbyModel ->
-            let
-                ( newLobbyModel, cmd ) =
-                    func lobbyModel
-            in
-            ( { model | page = Lobby newLobbyModel }, cmd )
-
-        _ ->
-            ( { model | errorMsg = "Error" }, Cmd.none )
-
-
-updateRoom : Msg -> RoomModel -> ( RoomModel, Cmd Msg )
-updateRoom msg roomModel =
-    case msg of
         UpdateSubmission text ->
-            ( { roomModel | submission = text }, Cmd.none )
+            ( { model | submission = text }, Cmd.none )
 
         Submit ->
-            ( { roomModel | submission = "" }, sendMessage ("submit " ++ cleanSubmission roomModel.submission) )
+            ( { model | submission = "" }, sendMessage ("submit " ++ cleanSubmission model.submission) )
 
         FinishTurn Nope ->
-            ( roomModel, sendMessage "finish" )
+            ( model, sendMessage "finish" )
 
         FinishTurn (Best name) ->
-            ( roomModel, sendMessage <| "finish " ++ name )
+            ( model, sendMessage <| "finish " ++ name )
 
         EmojiMsg subMsg ->
             case subMsg of
                 EmojiPicker.Select s ->
-                    ( { roomModel | submission = roomModel.submission ++ s }, Cmd.none )
+                    ( { model | submission = model.submission ++ s }, Cmd.none )
 
                 EmojiPicker.Toggle ->
-                    ( roomModel, Cmd.none )
+                    ( model, Cmd.none )
 
                 _ ->
                     let
                         ( m, c ) =
-                            EmojiPicker.update subMsg roomModel.emojiPicker
+                            EmojiPicker.update subMsg model.emojiPicker
                     in
-                    ( { roomModel | emojiPicker = m }, Cmd.map EmojiMsg c )
+                    ( { model | emojiPicker = m }, Cmd.map EmojiMsg c )
 
         KickPlayer player ->
-            ( { roomModel | playerToBeKicked = Just player }, Cmd.none )
+            ( { model | playerToBeKicked = Just player }, Cmd.none )
 
         KickPlayerConfirm confirm ->
-            case roomModel.playerToBeKicked of
+            case model.playerToBeKicked of
                 Nothing ->
-                    ( roomModel, Cmd.none )
+                    ( model, Cmd.none )
 
                 Just player ->
-                    ( { roomModel | playerToBeKicked = Nothing }
+                    ( { model | playerToBeKicked = Nothing }
                     , if confirm then
                         sendMessage <| "kick " ++ player.name
 
@@ -326,14 +265,75 @@ updateRoom msg roomModel =
                     )
 
         SkipTurn ->
-            ( roomModel, sendMessage "skip" )
-
-        _ ->
-            ( roomModel, Cmd.none )
+            ( model, sendMessage "skip" )
 
 
 
--- todo error
+--GeneratedRandomSecret randomVal ->
+--    ( { model | randomVal = Just randomVal }, Cmd.none )
+--UpdateLobbyPlayerName name ->
+--    ifInLobby model (\lobbyModel -> ( { lobbyModel | playerName = name }, Cmd.none ))
+--
+--UpdateLobbyRoomName name ->
+--    ifInLobby model (\lobbyModel -> ( { lobbyModel | roomName = name }, Cmd.none ))
+--JoinRoom ->
+--    case model.page of
+--        Lobby lobbyModel ->
+--            if (String.length lobbyModel.roomName == 0) || (String.length lobbyModel.playerName == 0) then
+--                ( model, Cmd.none )
+--
+--            else
+--                case model.randomVal of
+--                    Just randomVal ->
+--                        ( { model | secret = Just randomVal }
+--                        , sendMessage <| "join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " " ++ randomVal
+--                        )
+--
+--                    Nothing ->
+--                        ( model, Cmd.none )
+--
+--        _ ->
+--            ( model, Cmd.none )
+--_ ->
+--case model.page of
+--    Lobby lobbyModel ->
+--        let
+--            ( newLobbyModel, cmd ) =
+--                updateLobby msg lobbyModel
+--        in
+--        ( { model | page = Lobby newLobbyModel }, cmd )
+--
+--    Room roomModel ->
+--        let
+--            ( newRoomModel, cmd ) =
+--                updateRoom msg roomModel
+--        in
+--        ( { model | page = Room newRoomModel }, cmd )
+--
+--    _ ->
+--        ( model, Cmd.none )
+--ifInLobby : Model -> (LobbyModel -> ( LobbyModel, Cmd msg )) -> ( Model, Cmd msg )
+--ifInLobby model func =
+--    case model.page of
+--        Lobby lobbyModel ->
+--            let
+--                ( newLobbyModel, cmd ) =
+--                    func lobbyModel
+--            in
+--            ( { model | page = Lobby newLobbyModel }, cmd )
+--
+--        _ ->
+--            ( { model | errorMsg = "Error" }, Cmd.none )
+--updateRoom : Msg -> RoomModel -> ( RoomModel, Cmd Msg )
+--updateRoom msg roomModel =
+--    case msg of
+--
+--        _ ->
+--            ( roomModel, Cmd.none )
+--
+--
+--
+---- todo error
 
 
 cleanSubmission : String -> String
@@ -370,19 +370,18 @@ isEmoji char =
         || (code >= 0xDC00 && code <= 0xDFFF)
 
 
-updateLobby : Msg -> LobbyModel -> ( LobbyModel, Cmd Msg )
-updateLobby msg lobbyModel =
-    case msg of
-        --, Cmd.batch
-        --    [ sendMessage ("join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " somesecret")
-        --    , saveLogin ( lobbyModel.roomName, lobbyModel.playerName )
-        --    ]
-        --)
-        _ ->
-            ( lobbyModel, Cmd.none )
 
-
-
+--updateLobby : Msg -> LobbyModel -> ( LobbyModel, Cmd Msg )
+--updateLobby msg lobbyModel =
+--    case msg of
+--        --, Cmd.batch
+--        --    [ sendMessage ("join " ++ lobbyModel.roomName ++ " " ++ lobbyModel.playerName ++ " somesecret")
+--        --    , saveLogin ( lobbyModel.roomName, lobbyModel.playerName )
+--        --    ]
+--        --)
+--        _ ->
+--            ( lobbyModel, Cmd.none )
+--
 --todo error
 
 
@@ -392,15 +391,7 @@ onWsMsg model wsMsgJson =
         Ok wsMsg ->
             case wsMsg of
                 GameState game ->
-                    case model.page of
-                        Lobby lobbyModel ->
-                            { model | page = Room (initRoom lobbyModel game) }
-
-                        Room roomModel ->
-                            { model | page = Room { roomModel | game = game } }
-
-                        Disconnected ->
-                            model
+                    { model | game = game }
 
                 Ack ->
                     model
@@ -413,15 +404,16 @@ onWsMsg model wsMsgJson =
             { model | errorMsg = "Decode Error: " ++ errorToString msg }
 
 
-initRoom : LobbyModel -> Game -> RoomModel
-initRoom lobbyModel game =
-    { roomName = lobbyModel.roomName
-    , playerName = lobbyModel.playerName
-    , game = game
-    , submission = ""
-    , emojiPicker = { initEmojiPicker | hidden = False }
-    , playerToBeKicked = Nothing
-    }
+
+--initRoom : LobbyModel -> Game -> RoomModel
+--initRoom lobbyModel game =
+--    { roomName = lobbyModel.roomName
+--    , playerName = lobbyModel.playerName
+--    , game = game
+--    , submission = ""
+--    , emojiPicker = { initEmojiPicker | hidden = False }
+--    , playerToBeKicked = Nothing
+--    }
 
 
 initEmojiPicker =
@@ -449,16 +441,15 @@ view : Model -> Html Msg
 view model =
     div [ id "container" ]
         ([ div [ style "color" "red" ] [ text model.errorMsg ]
+
+         --, viewRoom model
          ]
-            ++ [ case model.page of
-                    Lobby lobbyModel ->
-                        viewLobby lobbyModel
-
-                    Room roomModel ->
-                        viewRoom roomModel
-
-                    Disconnected ->
+            ++ [ case model.connected of
+                    False ->
                         viewDisconnected
+
+                    True ->
+                        viewRoom model
                ]
         )
 
@@ -468,20 +459,21 @@ viewDisconnected =
     div [ id "disconnected" ] [ text "Trying to reconnect to the server..." ]
 
 
-viewLobby : LobbyModel -> Html Msg
-viewLobby model =
-    div [ id "lobby" ]
-        [ input [ id "playerName", onInput UpdateLobbyPlayerName, value model.playerName, placeholder "Player Name" ] []
-        , input [ id "roomName", onInput UpdateLobbyRoomName, value model.roomName, placeholder "Room Name" ] []
-        , button [ onClick JoinRoom ] [ text "Join" ]
-        ]
+
+--viewLobby : LobbyModel -> Html Msg
+--viewLobby model =
+--    div [ id "lobby" ]
+--        [ input [ id "playerName", onInput UpdateLobbyPlayerName, value model.playerName, placeholder "Player Name" ] []
+--        , input [ id "roomName", onInput UpdateLobbyRoomName, value model.roomName, placeholder "Room Name" ] []
+--        , button [ onClick JoinRoom ] [ text "Join" ]
+--        ]
 
 
-viewRoom : RoomModel -> Html Msg
-viewRoom roomModel =
+viewRoom : Model -> Html Msg
+viewRoom model =
     div
         ([ id "room" ]
-            ++ (if currentScreen roomModel == Write then
+            ++ (if currentScreen model == Write then
                     [ class "write-mode" ]
 
                 else
@@ -490,11 +482,11 @@ viewRoom roomModel =
         )
         --[ h1 [] [ text roomModel.roomName ]
         [ div [ id "left-col" ]
-            [ viewPlayerList roomModel
-            , viewInfoDisplay roomModel.game
+            [ viewPlayerList model
+            , viewInfoDisplay model.game
             ]
-        , div [ id "main-window" ] [ viewMainWindow roomModel ]
-        , div [ id "emoji-picker", style "position" "relative" ] [ viewEmojiPicker roomModel ]
+        , div [ id "main-window" ] [ viewMainWindow model ]
+        , div [ id "emoji-picker", style "position" "relative" ] [ viewEmojiPicker model ]
         ]
 
 
@@ -506,44 +498,44 @@ type Screen
     | ConfirmKick Player
 
 
-currentScreen : RoomModel -> Screen
-currentScreen roomModel =
-    case roomModel.playerToBeKicked of
+currentScreen : Model -> Screen
+currentScreen model =
+    case model.playerToBeKicked of
         Just player ->
             ConfirmKick player
 
         Nothing ->
-            if iAmTheGuesser roomModel then
-                if (currentTurn roomModel.game).submissionsComplete then
+            if iAmTheGuesser model then
+                if (currentTurn model.game).submissionsComplete then
                     Guess
 
                 else
                     Wait
 
-            else if (currentTurn roomModel.game).submissionsComplete then
+            else if (currentTurn model.game).submissionsComplete then
                 Submissions
 
-            else if hasSubmittedForCurrentTurn roomModel then
+            else if hasSubmittedForCurrentTurn model then
                 Wait
 
             else
                 Write
 
 
-viewMainWindow : RoomModel -> Html Msg
-viewMainWindow roomModel =
-    case currentScreen roomModel of
+viewMainWindow : Model -> Html Msg
+viewMainWindow model =
+    case currentScreen model of
         Wait ->
-            viewWaitForSubmissions roomModel.game
+            viewWaitForSubmissions model.game
 
         Write ->
-            viewSubmissionForm roomModel
+            viewSubmissionForm model
 
         Submissions ->
-            viewSubmissions (currentTurn roomModel.game)
+            viewSubmissions (currentTurn model.game)
 
         Guess ->
-            viewSubmissionsForGuesser (currentTurn roomModel.game)
+            viewSubmissionsForGuesser (currentTurn model.game)
 
         ConfirmKick player ->
             viewKickConfirm player
@@ -571,18 +563,18 @@ viewInfoDisplay game =
         ]
 
 
-viewPlayerList : RoomModel -> Html Msg
-viewPlayerList roomModel =
+viewPlayerList : Model -> Html Msg
+viewPlayerList model =
     div [ id "player-list" ]
         [ ul []
-            (List.map (viewPlayer roomModel) roomModel.game.players)
+            (List.map (viewPlayer model) model.game.players)
         ]
 
 
-viewPlayer : RoomModel -> Player -> Html Msg
-viewPlayer roomModel player =
+viewPlayer : Model -> Player -> Html Msg
+viewPlayer model player =
     li
-        ((if player.name == roomModel.playerName then
+        ((if player.name == model.credentials.playerName then
             [ class "player-self" ]
 
           else
@@ -592,10 +584,10 @@ viewPlayer roomModel player =
         )
         [ div [ id "player-icon1" ]
             [ text
-                (if isTheGuesser roomModel.game player then
+                (if isTheGuesser model.game player then
                     "🕵️\u{200D}♂️"
 
-                 else if not <| playerHasSubmitted roomModel.game player then
+                 else if not <| playerHasSubmitted model.game player then
                     "⏳"
 
                  else
@@ -614,7 +606,7 @@ viewPlayer roomModel player =
             [ text player.name ]
         , div [ id "player-icon2" ]
             [ text <|
-                if playerGotPointLastTurn roomModel.game player then
+                if playerGotPointLastTurn model.game player then
                     "\u{1F947}"
 
                 else if not player.active then
@@ -684,20 +676,20 @@ viewVotingButtons turn =
         ]
 
 
-viewSubmissionForm : RoomModel -> Html Msg
-viewSubmissionForm roomModel =
+viewSubmissionForm : Model -> Html Msg
+viewSubmissionForm model =
     div [ id "submission-form-container" ]
-        [ viewPhrase <| currentTurn roomModel.game
+        [ viewPhrase <| currentTurn model.game
         , div [ id "submission-form" ]
-            [ input [ onInput UpdateSubmission, placeholder "My Submission", value roomModel.submission ] []
+            [ input [ onInput UpdateSubmission, placeholder "My Submission", value model.submission ] []
             , button [ onClick Submit ] [ text "Submit" ]
             ]
         ]
 
 
-hasSubmittedForCurrentTurn : RoomModel -> Bool
-hasSubmittedForCurrentTurn roomModel =
-    List.member roomModel.playerName (Dict.keys (currentTurn roomModel.game).submissions)
+hasSubmittedForCurrentTurn : Model -> Bool
+hasSubmittedForCurrentTurn model =
+    List.member model.credentials.playerName (Dict.keys (currentTurn model.game).submissions)
 
 
 viewWaitForSubmissions : Game -> Html Msg
@@ -710,11 +702,11 @@ viewPhrase turn =
     div [ id "phrase" ] [ text turn.phrase ]
 
 
-viewEmojiPicker : RoomModel -> Html Msg
-viewEmojiPicker roomModel =
-    Html.map EmojiMsg <| EmojiPicker.view roomModel.emojiPicker
+viewEmojiPicker : Model -> Html Msg
+viewEmojiPicker model =
+    Html.map EmojiMsg <| EmojiPicker.view model.emojiPicker
 
 
-iAmTheGuesser : RoomModel -> Bool
-iAmTheGuesser roomModel =
-    (currentTurn roomModel.game).guesser == roomModel.playerName
+iAmTheGuesser : Model -> Bool
+iAmTheGuesser model =
+    (currentTurn model.game).guesser == model.credentials.playerName

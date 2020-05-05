@@ -115,8 +115,16 @@ body {
 #room #main-window #voting-buttons li {
   cursor: pointer;
 }
-#room #main-window #voting-buttons li:hover {
-  background-color: #c3d2de;
+#room #main-window #voting-buttons li,
+#room #main-window #voting-buttons #vote-nope {
+  transition: transform 0.3s ease-out;
+}
+#room #main-window #voting-buttons li:hover,
+#room #main-window #voting-buttons #vote-nope:hover {
+  transform: scale(1.1);
+}
+#room #main-window #voting-buttons #vote-help {
+  margin-top: 40px;
 }
 #room #main-window #submission-form {
   width: 100%;

@@ -33,15 +33,24 @@
 
 
      */
-
+    // var credentials = !localStorage.getItem('playerName') ? null : {
+    //     playerName: localStorage.getItem('playerName'),
+    //     roomName: localStorage.getItem('roomName'),
+    //     secret: localStorage.getItem('secret'),
+    // };
 
     // Start the Elm application.
-    var app = Elm.Main.init({
+    var app = Elm.Emojigame.init({
         node: document.getElementById('myapp'),
-        flags: window.localStorage.getItem('secret') || null,
+        // flags: credentials,
     });
 
     var socket;
+
+    // make sure we only subscribe once to this
+    app.ports.sendMessage.subscribe(function (message) {
+        socket.send(message);
+    });
 
     // Create your WebSocket.
     function connectWs() {
@@ -53,9 +62,7 @@
 
             // When a command goes to the `sendMessage` port, we pass the message
             // along to the WebSocket.
-            app.ports.sendMessage.subscribe(function (message) {
-                socket.send(message);
-            });
+
 
             // When a message comes into our WebSocket, we pass the message along
             // to the `messageReceiver` port.
@@ -80,9 +87,11 @@
 
     window.addEventListener("focus", function() {
         console.log('focus');
+        // socket.send('ping');
         if (!socket || socket.readyState === socket.CLOSED) {
             console.log('try reconnect');
             connectWs();
+            // socket = new WebSocket('ws://' + window.location.host);
         }
     });
 

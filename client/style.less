@@ -143,8 +143,19 @@ body {
             li {
                 cursor: pointer;
                 &:hover {
-                    background-color: @lightaccent;
+                    //background-color: @lightaccent;
                 }
+            }
+
+            li, #vote-nope {
+                transition: transform .2s ease-out;
+                &:hover {
+                    transform: scale(1.2);
+                }
+            }
+
+            #vote-help {
+                margin-top: 40px;
             }
         }
 

@@ -7,7 +7,17 @@ import * as path from "path";
 
 const app = express();
 
-app.use(express.static(__dirname + '/../../../client/public'))
+app.get('/stats', (req, res) => {
+    res.send('Rooms: ' + Array.from(rooms.keys()).join(', '));
+});
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/../../../client/public/index.html'));
+});
+app.get(/^\/\w+$/, (req, res) => {
+    res.sendFile(path.join(__dirname + '/../../../client/public/index.html'));
+});
+
+app.use(express.static(__dirname + '/../../../client/public'));
 
 //initialize a simple http server
 const server = http.createServer(app);
@@ -59,46 +69,35 @@ export class Room {
     public turns: Turn[] = [];
     private phraseset: string[];
 
-    constructor(name: string, initialPlayerName: string, initialPlayerWs: WebSocket, initialPlayerSecret: string, phraseset: string[]) {
-        this.name = name;
+    constructor(initialPlayerName: string, initialPlayerWs: WebSocket, initialPlayerSecret: string, phraseset: string[]) {
+        this.name = createUuid();
         this.join(initialPlayerName, initialPlayerWs, initialPlayerSecret);
         this.phraseset = phraseset.slice(); // slice copies the array
         this.turns.push(new Turn(this.getRandomPhrase(), this.players[0]));
+        rooms.set(this.name, this);
     }
 
 
     public join(name: string, ws: WebSocket, secret: string) {
         const existingPlayer = this.playersByName.get(name);
         if ( existingPlayer ) {
-            // if (existingPlayer.active) {
-            //     console.log('active player ' + name + ' exists');
-                // setTimeout(() => {
-                //     if (!existingPlayer.active) {
-                //         console.log('waited, now player is inactive');
-                //         this.join(name, ws);
-                //     } else {
-                //         console.log('player still active');
-                //         ws.send('error player already exists.');
-                //     }
-                // }, 5000);
-                // return false;
-            // } else {
-            //     existingPlayer.ws = ws;
-            //     existingPlayer.active = true;
-            //     existingPlayer.ponged = true;
-            //     playersBySocket.set(ws, existingPlayer);
+            if (existingPlayer.secret === secret) {
+                console.log('reconnecting existing player.');
+                existingPlayer.ws = ws;
+                existingPlayer.active = true;
+                existingPlayer.ponged = true;
+                playersBySocket.set(ws, existingPlayer);
+            } else {
+                console.log('secret does not match.');
                 return false;
-            // }
+            }
+        } else {
+            const player = new Player(name, ws, this, secret);
+            this.players.push(player);
+            this.playersByName.set(name, player);
+            playersBySocket.set(ws, player);
+            playersBySecret.set(secret, player);
         }
-        if (playersBySecret.has(secret)) {
-            console.log('secret already exists');
-            return false;
-        }
-        const player = new Player(name, ws, this, secret);
-        this.players.push(player);
-        this.playersByName.set(name, player);
-        playersBySocket.set(ws, player);
-        playersBySecret.set(secret, player);
         return true;
     }
 
@@ -107,8 +106,10 @@ export class Room {
     }
 
     private broadcast(msg: string) {
-        this.activePlayers().forEach((player) => {
-            player.ws.send(msg);
+        this.players.forEach((player) => {
+            if (player.ws.readyState === player.ws.OPEN) {
+                player.ws.send(msg);
+            }
         });
     }
 
@@ -180,7 +181,7 @@ export class Room {
             players: this.players.map((player: Player) => {
                 return player.toJson();
             }),
-            name: this.name,
+            id: this.name,
             turns: Array.from<Turn>(this.turns).map((turn: Turn) => {
                 return turn.toJson();
             })
@@ -218,6 +219,18 @@ export class Turn {
     }
 }
 
+function sendError(ws: WebSocket, message: string) {
+    ws.send(JSON.stringify({error: message}));
+}
+
+function sendJoinedMsg(ws: WebSocket, room: Room, secret: string) {
+    ws.send(JSON.stringify({joined: {secret, game: room.toJson()}}));
+}
+
+function createUuid(): string {
+    return Math.random().toString(32).substr(2);
+}
+
 wss.on('connection', (ws: WebSocket) => {
 
     // let player = new Player(ws);
@@ -239,46 +252,77 @@ wss.on('connection', (ws: WebSocket) => {
 
 
         if (cmd === 'reconnect') {
+            console.log('reconnecting player');
             if (playersBySocket.has(ws)) {
                 console.log('reconnect: ws already connected to a player');
                 return;
             }
+            let roomName = parts.shift()!;
+            let playerName: string = parts.shift()!;
             let secret: string = parts.shift()!;
-            let player: Player|undefined = playersBySecret.get(secret);
-            if (player) {
-                player.active = true;
-                player.ws = ws;
-                playersBySocket.set(ws, player);
-                player.room.checkSubmissionsComplete();
-                player.room.broadCastState();
+            // let player: Player|undefined = playersBySecret.get(secret);
+            const room = rooms.get(roomName);
+            if (!room) {
+                // console.log(rooms);
+                sendError(ws, 'Room does not exist.');
+                return;
             }
+            const player = room.playersByName.get(playerName);
+            if (!player) {
+                sendError(ws, 'Player does not exist in room.');
+                return;
+            }
+            if (player.secret !== secret) {
+                sendError(ws, 'Invalid credentials.');
+                return;
+            }
+            player.active = true;
+            player.ws = ws;
+            player.ponged = true;
+            playersBySocket.set(ws, player);
+            player.room.checkSubmissionsComplete();
+            player.room.broadCastState();
+            return;
+        }
+
+        if (cmd === 'create') {
+            const playerName: string = parts.shift()!;
+            console.log(playerName);
+            const secret = createUuid();
+            const room = new Room(playerName, ws, secret, phrasesets['german']);
+            // rooms.set(room.name, room);
+            sendJoinedMsg(ws, room, secret);
+            // console.log(rooms);
+            return;
         }
 
         if (cmd === 'join') {
             let roomName = parts.shift()!;
             let playerName: string = parts.shift()!;
-            let secret: string = parts.shift()!;
+            // let secret: string = parts.shift()!;
 
             let room = rooms.get(roomName);
-            if (room) {
-                if (!room.join(playerName, ws, secret)) {
-                    return;
-                }
-            } else {
-                room = new Room(roomName, playerName, ws, secret, phrasesets['german']);
-                rooms.set(roomName, room);
+            if (!room) {
+                sendError(ws, 'Room does not exist.');
+                return;
             }
+            const secret = createUuid();
+            if (!room.join(playerName, ws, secret)) {
+                return;
+            }
+            sendJoinedMsg(ws, room, secret);
             room.broadCastState();
+            return;
         }
 
         if (!playersBySocket.has(ws)) {
-            ws.send('error no player.');
+            sendError(ws,'No player for this connection.');
             return;
         }
 
         let player = playersBySocket.get(ws)!;
         if (playersBySocket.get(ws)!.room === null) {
-            ws.send('error no room');
+            sendError(ws, 'Room does not exist.');
             return;
         }
 

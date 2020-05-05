@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-client": "cd client && elm make src/Main.elm --output=public/dist.js && lessc style.less public/style.css && cd ..",
+    "build-client-old": "cd client && elm make src/Main.elm --output=public/dist.js && lessc style.less public/style.css && cd ..",
+    "build-client": "cd client && elm make src/Emojigame.elm --output=public/dist.js && lessc style.less public/style.css && cd ..",
     "build-server": "tsc --build server/tsconfig.json",
     "build": "npm run build-client && npm run build-server",
     "run-server": "node server/dist/server/server.js",
