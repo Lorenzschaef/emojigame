@@ -81,16 +81,17 @@ export class Room {
     public join(name: string, ws: WebSocket, secret: string) {
         const existingPlayer = this.playersByName.get(name);
         if ( existingPlayer ) {
-            if (existingPlayer.secret === secret) {
+            // todo!!!
+            // if (existingPlayer.secret === secret) {
                 console.log('reconnecting existing player.');
                 existingPlayer.ws = ws;
                 existingPlayer.active = true;
                 existingPlayer.ponged = true;
                 playersBySocket.set(ws, existingPlayer);
-            } else {
-                console.log('secret does not match.');
-                return false;
-            }
+            // } else {
+            //     console.log('secret does not match.');
+            //     return false;
+            // }
         } else {
             const player = new Player(name, ws, this, secret);
             this.players.push(player);

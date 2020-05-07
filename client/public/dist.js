@@ -5196,8 +5196,33 @@ var $author$project$Credentials$decoder = A3(
 			'playerName',
 			$author$project$Game$playerNameDecoder,
 			$elm$json$Json$Decode$succeed($author$project$Credentials$Credentials))));
+var $author$project$Emojigame$getCredentialsFromFlags = F2(
+	function (flags, url) {
+		var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$Credentials$decoder, flags);
+		if (_v0.$ === 'Ok') {
+			var credentials = _v0.a;
+			var _v1 = credentials.roomId;
+			var roomId = _v1.a;
+			return _Utils_eq(
+				A2($elm$core$String$dropLeft, 1, url.path),
+				roomId) ? $elm$core$Maybe$Just(credentials) : $elm$core$Maybe$Nothing;
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Emojigame$sendMessage = _Platform_outgoingPort('sendMessage', $elm$json$Json$Encode$string);
+var $author$project$Emojigame$reconnect = function (credentials) {
+	var _v0 = credentials.secret;
+	var secret = _v0.a;
+	var _v1 = credentials.roomId;
+	var roomId = _v1.a;
+	var _v2 = credentials.playerName;
+	var playerName = _v2.a;
+	return $author$project$Emojigame$sendMessage('reconnect ' + (roomId + (' ' + (playerName + (' ' + secret)))));
+};
 var $author$project$Emojigame$Create = {$: 'Create'};
 var $author$project$Emojigame$Join = function (a) {
 	return {$: 'Join', a: a};
@@ -5223,17 +5248,25 @@ var $author$project$Emojigame$init = F3(
 				currentUrl: url,
 				navKey: key,
 				page: function () {
-					var _v0 = A2($elm$json$Json$Decode$decodeValue, $author$project$Credentials$decoder, flags);
-					if (_v0.$ === 'Ok') {
+					var _v0 = A2($author$project$Emojigame$getCredentialsFromFlags, flags, url);
+					if (_v0.$ === 'Nothing') {
+						return $author$project$Emojigame$updateUrl(url);
+					} else {
 						var credentials = _v0.a;
 						return $author$project$Emojigame$Disconnected(
 							$author$project$Emojigame$Reconnect(credentials));
-					} else {
-						return $author$project$Emojigame$updateUrl(url);
 					}
 				}()
 			},
-			$elm$core$Platform$Cmd$none);
+			function () {
+				var _v1 = A2($author$project$Emojigame$getCredentialsFromFlags, flags, url);
+				if (_v1.$ === 'Nothing') {
+					return $elm$core$Platform$Cmd$none;
+				} else {
+					var credentials = _v1.a;
+					return $author$project$Emojigame$reconnect(credentials);
+				}
+			}());
 	});
 var $author$project$Emojigame$ConnectedWs = {$: 'ConnectedWs'};
 var $author$project$Emojigame$DisconnectedWs = {$: 'DisconnectedWs'};
@@ -5663,18 +5696,16 @@ var $author$project$Emojigame$Playing = function (a) {
 var $author$project$PlayingScreen$UpdateGame = function (a) {
 	return {$: 'UpdateGame', a: a};
 };
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Emojigame$sendMessage = _Platform_outgoingPort('sendMessage', $elm$json$Json$Encode$string);
 var $author$project$Emojigame$createRoom = F2(
 	function (settings, _v0) {
 		var playerName = _v0.a;
 		return $author$project$Emojigame$sendMessage('create ' + playerName);
 	});
 var $author$project$Emojigame$defaultSettings = {phraseSet: ''};
+var $author$project$PlayingScreen$Wait = {$: 'Wait'};
 var $author$project$PlayingScreen$Guess = {$: 'Guess'};
 var $author$project$PlayingScreen$Invite = {$: 'Invite'};
 var $author$project$PlayingScreen$Submissions = {$: 'Submissions'};
-var $author$project$PlayingScreen$Wait = {$: 'Wait'};
 var $author$project$PlayingScreen$Write = function (a) {
 	return {$: 'Write', a: a};
 };
@@ -5734,9 +5765,29 @@ var $author$project$PlayingScreen$iAmTheGuesser = F2(
 			$author$project$PlayingScreen$currentTurn(game).guesser,
 			credentials.playerName);
 	});
-var $author$project$PlayingScreen$currentScreen = F2(
-	function (game, credentials) {
-		return ($elm$core$List$length(game.players) < 2) ? $author$project$PlayingScreen$Invite : (A2($author$project$PlayingScreen$iAmTheGuesser, game, credentials) ? ($author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Guess : $author$project$PlayingScreen$Wait) : ($author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Submissions : (A2($author$project$PlayingScreen$hasSubmittedForCurrentTurn, game, credentials) ? $author$project$PlayingScreen$Wait : $author$project$PlayingScreen$Write(''))));
+var $author$project$PlayingScreen$currentScreen = F3(
+	function (oldPhase, game, credentials) {
+		if ($elm$core$List$length(game.players) < 2) {
+			return $author$project$PlayingScreen$Invite;
+		} else {
+			if (A2($author$project$PlayingScreen$iAmTheGuesser, game, credentials)) {
+				return $author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Guess : $author$project$PlayingScreen$Wait;
+			} else {
+				if ($author$project$PlayingScreen$currentTurn(game).submissionsComplete) {
+					return $author$project$PlayingScreen$Submissions;
+				} else {
+					if (A2($author$project$PlayingScreen$hasSubmittedForCurrentTurn, game, credentials)) {
+						return $author$project$PlayingScreen$Wait;
+					} else {
+						if (oldPhase.$ === 'Write') {
+							return oldPhase;
+						} else {
+							return $author$project$PlayingScreen$Write('');
+						}
+					}
+				}
+			}
+		}
 	});
 var $elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var $author$project$Styles$categoryIcon = $elm$svg$Svg$Attributes$style('margin: 5px 7px 5px 6px; cursor: pointer;');
@@ -5798,7 +5849,7 @@ var $author$project$PlayingScreen$init = F3(
 			emojiPicker: $author$project$PlayingScreen$initEmojiPicker,
 			game: game,
 			link: link,
-			phase: A2($author$project$PlayingScreen$currentScreen, game, credentials)
+			phase: A3($author$project$PlayingScreen$currentScreen, $author$project$PlayingScreen$Wait, game, credentials)
 		};
 	});
 var $author$project$Emojigame$join = F2(
@@ -5888,16 +5939,49 @@ var $author$project$Emojigame$mapPlayingUpdate = function (_v0) {
 					wsCmd
 				])));
 };
-var $author$project$Emojigame$reconnect = function (credentials) {
+var $elm$browser$Browser$Navigation$replaceUrl = _Browser_replaceUrl;
+var $author$project$Emojigame$credentialsSaver = _Platform_outgoingPort('credentialsSaver', $elm$json$Json$Encode$string);
+var $elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v0, obj) {
+					var k = _v0.a;
+					var v = _v0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var $author$project$Credentials$encoder = function (credentials) {
 	var _v0 = credentials.secret;
 	var secret = _v0.a;
 	var _v1 = credentials.roomId;
 	var roomId = _v1.a;
 	var _v2 = credentials.playerName;
 	var playerName = _v2.a;
-	return $author$project$Emojigame$sendMessage('reconnect ' + (roomId + (' ' + (playerName + (' ' + secret)))));
+	return $elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'roomId',
+				$elm$json$Json$Encode$string(roomId)),
+				_Utils_Tuple2(
+				'playerName',
+				$elm$json$Json$Encode$string(playerName)),
+				_Utils_Tuple2(
+				'secret',
+				$elm$json$Json$Encode$string(secret))
+			]));
 };
-var $elm$browser$Browser$Navigation$replaceUrl = _Browser_replaceUrl;
+var $author$project$Emojigame$saveCredentials = function (credentials) {
+	return $author$project$Emojigame$credentialsSaver(
+		A2(
+			$elm$json$Json$Encode$encode,
+			1,
+			$author$project$Credentials$encoder(credentials)));
+};
 var $elm$core$Debug$toString = _Debug_toString;
 var $author$project$PlayingScreen$ConfirmKick = function (a) {
 	return {$: 'ConfirmKick', a: a};
@@ -5952,7 +6036,7 @@ var $author$project$PlayingScreen$updateGame = F2(
 				phase: A2(
 					$elm$core$Debug$log,
 					'phase: ',
-					A2($author$project$PlayingScreen$currentScreen, game, model.credentials))
+					A3($author$project$PlayingScreen$currentScreen, model.phase, game, model.credentials))
 			});
 	});
 var $author$project$PlayingScreen$update = F2(
@@ -5998,10 +6082,18 @@ var $author$project$PlayingScreen$update = F2(
 					if (_v0.b.$ === 'Guess') {
 						var finishingVote = _v0.a.a;
 						var _v2 = _v0.b;
+						var args = function () {
+							if (finishingVote.$ === 'Nope') {
+								return '';
+							} else {
+								var playerName = finishingVote.a;
+								return ' ' + playerName;
+							}
+						}();
 						return _Utils_Tuple3(
 							model,
 							$elm$core$Platform$Cmd$none,
-							$author$project$PlayingScreen$sendMessage('finish'));
+							$author$project$PlayingScreen$sendMessage('finish' + args));
 					} else {
 						break _v0$8;
 					}
@@ -6028,9 +6120,9 @@ var $author$project$PlayingScreen$update = F2(
 						case 'Toggle':
 							return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Maybe$Nothing);
 						default:
-							var _v5 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, model.emojiPicker);
-							var m = _v5.a;
-							var c = _v5.b;
+							var _v6 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, model.emojiPicker);
+							var m = _v6.a;
+							var c = _v6.b;
 							return _Utils_Tuple3(
 								_Utils_update(
 									model,
@@ -6052,13 +6144,13 @@ var $author$project$PlayingScreen$update = F2(
 					if (_v0.b.$ === 'ConfirmKick') {
 						var confirm = _v0.a.a;
 						var player = _v0.b.a;
-						var _v6 = player.name;
-						var playerName = _v6.a;
+						var _v7 = player.name;
+						var playerName = _v7.a;
 						return _Utils_Tuple3(
 							_Utils_update(
 								model,
 								{
-									phase: A2($author$project$PlayingScreen$currentScreen, model.game, model.credentials)
+									phase: A3($author$project$PlayingScreen$currentScreen, model.phase, model.game, model.credentials)
 								}),
 							$elm$core$Platform$Cmd$none,
 							confirm ? $author$project$PlayingScreen$sendMessage('kick ' + playerName) : $elm$core$Maybe$Nothing);
@@ -6066,7 +6158,7 @@ var $author$project$PlayingScreen$update = F2(
 						break _v0$8;
 					}
 				default:
-					var _v7 = _v0.a;
+					var _v8 = _v0.a;
 					return _Utils_Tuple3(
 						model,
 						$elm$core$Platform$Cmd$none,
@@ -6216,7 +6308,12 @@ var $author$project$Emojigame$update = F2(
 												_Utils_ap(
 													$author$project$Emojigame$makeLink(model.currentUrl),
 													roomId)))),
-									A2($elm$browser$Browser$Navigation$replaceUrl, model.navKey, roomId));
+									$elm$core$Platform$Cmd$batch(
+										_List_fromArray(
+											[
+												A2($elm$browser$Browser$Navigation$replaceUrl, model.navKey, roomId),
+												$author$project$Emojigame$saveCredentials(credentials)
+											])));
 							} else {
 								break _v0$15;
 							}
@@ -6236,7 +6333,7 @@ var $author$project$Emojigame$update = F2(
 												credentials,
 												game,
 												$author$project$Emojigame$makeLink(model.currentUrl)))),
-									$elm$core$Platform$Cmd$none);
+									$author$project$Emojigame$saveCredentials(credentials));
 							} else {
 								var _v15 = _v0.b;
 								return _Utils_Tuple2(

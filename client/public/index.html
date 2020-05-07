@@ -42,7 +42,7 @@
     // Start the Elm application.
     var app = Elm.Emojigame.init({
         node: document.getElementById('myapp'),
-        // flags: credentials,
+        flags: localStorage.getItem('credentials'),
     });
 
     var socket;
@@ -50,6 +50,10 @@
     // make sure we only subscribe once to this
     app.ports.sendMessage.subscribe(function (message) {
         socket.send(message);
+    });
+
+    app.ports.credentialsSaver.subscribe(function(args) {
+        window.localStorage.setItem('credentials', args);
     });
 
     // Create your WebSocket.
@@ -70,10 +74,6 @@
                 app.ports.messageReceiver.send(event.data);
             });
 
-            // app.ports.saveLogin.subscribe(function(args) {
-            //     window.localStorage.setItem('room', args[0]);
-            //     window.localStorage.setItem('player', args[1]);
-            // });
 
             socket.addEventListener("close", function (event) {
                 console.log('ws closed');

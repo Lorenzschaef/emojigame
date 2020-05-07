@@ -117,11 +117,11 @@ body {
 }
 #room #main-window #voting-buttons li,
 #room #main-window #voting-buttons #vote-nope {
-  transition: transform 0.3s ease-out;
+  transition: transform 0.2s ease-out;
 }
 #room #main-window #voting-buttons li:hover,
 #room #main-window #voting-buttons #vote-nope:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 #room #main-window #voting-buttons #vote-help {
   margin-top: 40px;
@@ -163,6 +163,7 @@ button {
   }
   #room #left-col {
     flex: 0 0 auto;
+    border-right: none;
   }
   #room #main-window {
     flex: 1 0 auto;
@@ -171,6 +172,7 @@ button {
     flex: 0 0 0;
     transition: flex 0.3s ease-out;
     overflow: hidden;
+    border-left: none;
   }
   #room #left-col {
     transition: flex 0.3s ease-out;

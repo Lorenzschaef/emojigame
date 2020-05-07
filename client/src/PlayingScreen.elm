@@ -46,7 +46,7 @@ type PlayingPhase
 
 init : Credentials -> Game -> String -> Model
 init credentials game link =
-    { phase = currentScreen game credentials
+    { phase = currentScreen Wait game credentials
     , emojiPicker = initEmojiPicker
     , game = game
     , credentials = credentials
@@ -75,7 +75,16 @@ update model msg =
             ( { model | phase = Wait }, Cmd.none, sendMessage ("submit " ++ submission) )
 
         ( FinishTurn finishingVote, Guess ) ->
-            ( model, Cmd.none, sendMessage "finish" )
+            let
+                args =
+                    case finishingVote of
+                        Nope ->
+                            ""
+
+                        Best playerName ->
+                            " " ++ playerName
+            in
+            ( model, Cmd.none, sendMessage ("finish" ++ args) )
 
         ( EmojiMsg subMsg, phase ) ->
             case subMsg of
@@ -105,7 +114,7 @@ update model msg =
                 (PlayerName playerName) =
                     player.name
             in
-            ( { model | phase = currentScreen model.game model.credentials }
+            ( { model | phase = currentScreen model.phase model.game model.credentials }
             , Cmd.none
             , if confirm then
                 sendMessage <| "kick " ++ playerName
@@ -133,13 +142,13 @@ sendMessage =
 updateGame : Model -> Game -> Model
 updateGame model game =
     { model
-        | phase = Debug.log "phase: " <| currentScreen game model.credentials
+        | phase = Debug.log "phase: " <| currentScreen model.phase game model.credentials
         , game = game
     }
 
 
-currentScreen : Game -> Credentials -> PlayingPhase
-currentScreen game credentials =
+currentScreen : PlayingPhase -> Game -> Credentials -> PlayingPhase
+currentScreen oldPhase game credentials =
     if List.length game.players < 2 then
         Invite
 
@@ -157,7 +166,12 @@ currentScreen game credentials =
         Wait
 
     else
-        Write ""
+        case oldPhase of
+            Write _ ->
+                oldPhase
+
+            _ ->
+                Write ""
 
 
 viewPlaying : Model -> Html Msg
