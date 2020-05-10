@@ -5703,6 +5703,9 @@ var $author$project$Emojigame$createRoom = F2(
 	});
 var $author$project$Emojigame$defaultSettings = {phraseSet: ''};
 var $author$project$PlayingScreen$Wait = {$: 'Wait'};
+var $author$project$PlayingScreen$FinishedTurn = function (a) {
+	return {$: 'FinishedTurn', a: a};
+};
 var $author$project$PlayingScreen$Guess = {$: 'Guess'};
 var $author$project$PlayingScreen$Invite = {$: 'Invite'};
 var $author$project$PlayingScreen$Submissions = {$: 'Submissions'};
@@ -5765,13 +5768,41 @@ var $author$project$PlayingScreen$iAmTheGuesser = F2(
 			$author$project$PlayingScreen$currentTurn(game).guesser,
 			credentials.playerName);
 	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $mgold$elm_nonempty_list$List$Nonempty$tail = function (_v0) {
+	var x = _v0.a;
+	var xs = _v0.b;
+	return xs;
+};
+var $author$project$PlayingScreen$lastTurn = function (game) {
+	return $elm$core$List$head(
+		$mgold$elm_nonempty_list$List$Nonempty$tail(game.turns));
+};
 var $author$project$PlayingScreen$currentScreen = F3(
 	function (oldPhase, game, credentials) {
 		if ($elm$core$List$length(game.players) < 2) {
 			return $author$project$PlayingScreen$Invite;
 		} else {
 			if (A2($author$project$PlayingScreen$iAmTheGuesser, game, credentials)) {
-				return $author$project$PlayingScreen$currentTurn(game).submissionsComplete ? $author$project$PlayingScreen$Guess : $author$project$PlayingScreen$Wait;
+				if ($author$project$PlayingScreen$currentTurn(game).submissionsComplete) {
+					return $author$project$PlayingScreen$Guess;
+				} else {
+					var _v0 = $author$project$PlayingScreen$lastTurn(game);
+					if (_v0.$ === 'Just') {
+						var turn = _v0.a;
+						return $author$project$PlayingScreen$FinishedTurn(turn);
+					} else {
+						return $author$project$PlayingScreen$Wait;
+					}
+				}
 			} else {
 				if ($author$project$PlayingScreen$currentTurn(game).submissionsComplete) {
 					return $author$project$PlayingScreen$Submissions;
@@ -5779,10 +5810,19 @@ var $author$project$PlayingScreen$currentScreen = F3(
 					if (A2($author$project$PlayingScreen$hasSubmittedForCurrentTurn, game, credentials)) {
 						return $author$project$PlayingScreen$Wait;
 					} else {
-						if (oldPhase.$ === 'Write') {
-							return oldPhase;
-						} else {
-							return $author$project$PlayingScreen$Write('');
+						switch (oldPhase.$) {
+							case 'Guess':
+								var _v2 = $author$project$PlayingScreen$lastTurn(game);
+								if (_v2.$ === 'Just') {
+									var turn = _v2.a;
+									return $author$project$PlayingScreen$FinishedTurn(turn);
+								} else {
+									return $author$project$PlayingScreen$Write('');
+								}
+							case 'Write':
+								return oldPhase;
+							default:
+								return $author$project$PlayingScreen$Write('');
 						}
 					}
 				}
@@ -6042,7 +6082,7 @@ var $author$project$PlayingScreen$updateGame = F2(
 var $author$project$PlayingScreen$update = F2(
 	function (model, msg) {
 		var _v0 = _Utils_Tuple2(msg, model.phase);
-		_v0$8:
+		_v0$9:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'UpdateGame':
@@ -6063,7 +6103,7 @@ var $author$project$PlayingScreen$update = F2(
 							$elm$core$Platform$Cmd$none,
 							$elm$core$Maybe$Nothing);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'Submit':
 					if (_v0.b.$ === 'Write') {
@@ -6076,7 +6116,7 @@ var $author$project$PlayingScreen$update = F2(
 							$elm$core$Platform$Cmd$none,
 							$author$project$PlayingScreen$sendMessage('submit ' + submission));
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'FinishTurn':
 					if (_v0.b.$ === 'Guess') {
@@ -6095,7 +6135,21 @@ var $author$project$PlayingScreen$update = F2(
 							$elm$core$Platform$Cmd$none,
 							$author$project$PlayingScreen$sendMessage('finish' + args));
 					} else {
-						break _v0$8;
+						break _v0$9;
+					}
+				case 'GotoNextTurn':
+					if (_v0.b.$ === 'FinishedTurn') {
+						var _v4 = _v0.a;
+						return _Utils_Tuple3(
+							_Utils_update(
+								model,
+								{
+									phase: A2($author$project$PlayingScreen$iAmTheGuesser, model.game, model.credentials) ? $author$project$PlayingScreen$Wait : $author$project$PlayingScreen$Write('')
+								}),
+							$elm$core$Platform$Cmd$none,
+							$elm$core$Maybe$Nothing);
+					} else {
+						break _v0$9;
 					}
 				case 'EmojiMsg':
 					var subMsg = _v0.a.a;
@@ -6120,9 +6174,9 @@ var $author$project$PlayingScreen$update = F2(
 						case 'Toggle':
 							return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Maybe$Nothing);
 						default:
-							var _v6 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, model.emojiPicker);
-							var m = _v6.a;
-							var c = _v6.b;
+							var _v7 = A2($author$project$EmojiPicker$EmojiPicker$update, subMsg, model.emojiPicker);
+							var m = _v7.a;
+							var c = _v7.b;
 							return _Utils_Tuple3(
 								_Utils_update(
 									model,
@@ -6144,8 +6198,8 @@ var $author$project$PlayingScreen$update = F2(
 					if (_v0.b.$ === 'ConfirmKick') {
 						var confirm = _v0.a.a;
 						var player = _v0.b.a;
-						var _v7 = player.name;
-						var playerName = _v7.a;
+						var _v8 = player.name;
+						var playerName = _v8.a;
 						return _Utils_Tuple3(
 							_Utils_update(
 								model,
@@ -6155,10 +6209,10 @@ var $author$project$PlayingScreen$update = F2(
 							$elm$core$Platform$Cmd$none,
 							confirm ? $author$project$PlayingScreen$sendMessage('kick ' + playerName) : $elm$core$Maybe$Nothing);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				default:
-					var _v8 = _v0.a;
+					var _v9 = _v0.a;
 					return _Utils_Tuple3(
 						model,
 						$elm$core$Platform$Cmd$none,
@@ -26048,6 +26102,94 @@ var $author$project$PlayingScreen$viewSubmissionsForGuesser = function (turn) {
 				$author$project$PlayingScreen$viewVotingButtons(turn)
 			]));
 };
+var $author$project$PlayingScreen$GotoNextTurn = {$: 'GotoNextTurn'};
+var $pzp1997$assoc_list$AssocList$get = F2(
+	function (targetKey, _v0) {
+		get:
+		while (true) {
+			var alist = _v0.a;
+			if (!alist.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var _v2 = alist.a;
+				var key = _v2.a;
+				var value = _v2.b;
+				var rest = alist.b;
+				if (_Utils_eq(key, targetKey)) {
+					return $elm$core$Maybe$Just(value);
+				} else {
+					var $temp$targetKey = targetKey,
+						$temp$_v0 = $pzp1997$assoc_list$AssocList$D(rest);
+					targetKey = $temp$targetKey;
+					_v0 = $temp$_v0;
+					continue get;
+				}
+			}
+		}
+	});
+var $author$project$PlayingScreen$viewTurnFinishedScreen = function (turn) {
+	var _v0 = turn.guesser;
+	var guesser = _v0.a;
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('turn-finished')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(turn.phrase)
+					])),
+				function () {
+				var _v1 = turn.bestSubmissionPlayerName;
+				if (_v1.$ === 'Nothing') {
+					return A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$id('phrase')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(guesser + ' did not guess it.')
+							]));
+				} else {
+					var bestSolutionPlayer = _v1.a;
+					var _v2 = bestSolutionPlayer;
+					var playerNameStr = _v2.a;
+					return A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$id('picked-solution')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								guesser + (' picked: ' + (A2(
+									$elm$core$Maybe$withDefault,
+									'',
+									A2($pzp1997$assoc_list$AssocList$get, bestSolutionPlayer, turn.submissions)) + (' by ' + playerNameStr))))
+							]));
+				}
+			}(),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$PlayingScreen$GotoNextTurn)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Next Turn')
+					]))
+			]));
+};
 var $author$project$PlayingScreen$viewWaitForSubmissions = function (_v0) {
 	return A2(
 		$elm$html$Html$div,
@@ -26076,6 +26218,9 @@ var $author$project$PlayingScreen$viewMainWindow = function (model) {
 		case 'Guess':
 			return $author$project$PlayingScreen$viewSubmissionsForGuesser(
 				$author$project$PlayingScreen$currentTurn(model.game));
+		case 'FinishedTurn':
+			var turn = _v0.a;
+			return $author$project$PlayingScreen$viewTurnFinishedScreen(turn);
 		default:
 			var player = _v0.a;
 			return $author$project$PlayingScreen$viewKickConfirm(player);
@@ -26090,20 +26235,6 @@ var $author$project$PlayingScreen$isTheGuesser = F2(
 			$author$project$PlayingScreen$currentTurn(game).guesser,
 			player.name);
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $mgold$elm_nonempty_list$List$Nonempty$tail = function (_v0) {
-	var x = _v0.a;
-	var xs = _v0.b;
-	return xs;
-};
 var $author$project$PlayingScreen$playerGotPointLastTurn = F2(
 	function (game, player) {
 		var _v0 = $elm$core$List$head(

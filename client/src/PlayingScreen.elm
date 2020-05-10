@@ -24,6 +24,7 @@ type Msg
     | UpdateSubmission String
     | Submit
     | FinishTurn FinishingVote
+    | GotoNextTurn
     | EmojiMsg EmojiPicker.Msg
     | KickPlayer Game.Player
     | KickPlayerConfirm Bool
@@ -41,6 +42,7 @@ type PlayingPhase
     | Write String
     | Submissions
     | Guess
+    | FinishedTurn Turn
     | ConfirmKick Game.Player
 
 
@@ -85,6 +87,19 @@ update model msg =
                             " " ++ playerName
             in
             ( model, Cmd.none, sendMessage ("finish" ++ args) )
+
+        ( GotoNextTurn, FinishedTurn _ ) ->
+            ( { model
+                | phase =
+                    if iAmTheGuesser model.game model.credentials then
+                        Wait
+
+                    else
+                        Write ""
+              }
+            , Cmd.none
+            , Nothing
+            )
 
         ( EmojiMsg subMsg, phase ) ->
             case subMsg of
@@ -157,7 +172,12 @@ currentScreen oldPhase game credentials =
             Guess
 
         else
-            Wait
+            case lastTurn game of
+                Just turn ->
+                    FinishedTurn turn
+
+                Nothing ->
+                    Wait
 
     else if (currentTurn game).submissionsComplete then
         Submissions
@@ -167,11 +187,24 @@ currentScreen oldPhase game credentials =
 
     else
         case oldPhase of
+            Guess ->
+                case lastTurn game of
+                    Just turn ->
+                        FinishedTurn turn
+
+                    Nothing ->
+                        Write ""
+
             Write _ ->
                 oldPhase
 
             _ ->
                 Write ""
+
+
+lastTurn : Game -> Maybe Turn
+lastTurn game =
+    game.turns |> NE.tail |> List.head
 
 
 viewPlaying : Model -> Html Msg
@@ -212,6 +245,9 @@ viewMainWindow model =
 
         Guess ->
             viewSubmissionsForGuesser (currentTurn model.game)
+
+        FinishedTurn turn ->
+            viewTurnFinishedScreen turn
 
         ConfirmKick player ->
             viewKickConfirm player
@@ -362,6 +398,28 @@ viewVotingButtons turn =
         [ ul [] (List.map (\( PlayerName k, v ) -> li [ onClick <| FinishTurn (Best k) ] [ text v ]) (Dict.toList turn.submissions))
         , button [ id "vote-nope", onClick (FinishTurn Nope) ] [ text "\u{1F937}" ]
         , div [ id "vote-help" ] [ text "Did you get it? Talk to the other players. Then choose who did the best job or click \u{1F937} if you didn't guess it right." ]
+        ]
+
+
+viewTurnFinishedScreen : Turn -> Html Msg
+viewTurnFinishedScreen turn =
+    let
+        (PlayerName guesser) =
+            turn.guesser
+    in
+    div [ id "turn-finished" ]
+        [ div [] [ text turn.phrase ]
+        , case turn.bestSubmissionPlayerName of
+            Nothing ->
+                div [ id "phrase" ] [ text <| guesser ++ " did not guess it." ]
+
+            Just bestSolutionPlayer ->
+                let
+                    (PlayerName playerNameStr) =
+                        bestSolutionPlayer
+                in
+                div [ id "picked-solution" ] [ text <| guesser ++ " picked: " ++ Maybe.withDefault "" (Dict.get bestSolutionPlayer turn.submissions) ++ " by " ++ playerNameStr ]
+        , button [ onClick GotoNextTurn ] [ text "Next Turn" ]
         ]
 
 
