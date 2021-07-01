@@ -16,7 +16,7 @@ There are still some bugs and parts of the code are a mess, but I was able to en
 I don't have a server set up, so if you want to play, you have to run the server yourself.
 
 1. Clone the repository.
-2. Install npm and elm if you don't have them installed.
+2. Install nodejs, npm and elm if you don't have them installed.
 3. Run `npm start` in your terminal.
 4. You can now access the game through `localhost:8999`.
 5. Use for example "ngrok" to make the game accessible through the internet.
