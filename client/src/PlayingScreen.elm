@@ -350,7 +350,6 @@ viewSubmissions turn =
 viewSubmissionsForGuesser : Turn -> Html Msg
 viewSubmissionsForGuesser turn =
     div [ id "submission-list" ]
-        --[ ul [] (List.map (\s -> li [] [ text s ]) (Dict.values turn.submissions))
         [ viewVotingButtons turn
         ]
 
@@ -358,7 +357,6 @@ viewSubmissionsForGuesser turn =
 viewVotingButtons : Turn -> Html Msg
 viewVotingButtons turn =
     div [ id "voting-buttons" ]
-        --[ button [ onClick VoteOk ] [ text "✅" ]
         [ ul [] (List.map (\( PlayerName k, v ) -> li [ onClick <| FinishTurn (Best k) ] [ text v ]) (Dict.toList turn.submissions))
         , button [ id "vote-nope", onClick (FinishTurn Nope) ] [ text "\u{1F937}" ]
         , div [ id "vote-help" ] [ text "Did you get it? Talk to the other players. Then choose who did the best job or click \u{1F937} if you didn't guess it right." ]

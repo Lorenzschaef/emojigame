@@ -1,11 +1,9 @@
 port module Emojigame exposing (..)
 
-import AssocList
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
 import Credentials exposing (Credentials)
 import Debug
-import Dict
 import EmojiPicker.EmojiPicker as EmojiPicker
 import Game exposing (Game, Player, PlayerName(..), Turn)
 import Html exposing (..)
@@ -13,9 +11,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode
 import Json.Encode exposing (Value)
-import List.Nonempty as NE
 import PlayingScreen as Playing
-import Random
 import RoomId exposing (RoomId(..))
 import Url exposing (Url)
 import WsApi exposing (Msg(..))
@@ -98,26 +94,6 @@ type alias Settings =
     }
 
 
-
---type alias PlayingModel =
---    { phase : PlayingPhase
---    , picker : EmojiPicker.Model
---    , game : Game
---    , credentials : Credentials
---    }
---
---
---type FinishingVote
---    = Nope
---    | Best String
---type PlayingPhase
---    = Wait
---    | Write String
---    | Submissions
---    | Guess
---    | ConfirmKick Game.Player
-
-
 type Msg
     = UrlChanged Url
     | UrlRequested UrlRequest
@@ -128,21 +104,6 @@ type Msg
     | DisconnectedWs
     | ConnectedWs
     | PlayingMsg Playing.Msg
-
-
-
---| UpdateSubmission String
---| Submit
---| FinishTurn FinishingVote
---| EmojiMsg EmojiPicker.Msg
---| KickPlayer Game.Player
---| KickPlayerConfirm Bool
---| SkipTurn
---type ServerMsg
---    = GameState Game
---    | Secret Credentials.Secret
---    | ParseError String
--- INIT
 
 
 init : Json.Decode.Value -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -201,16 +162,6 @@ defaultSettings =
     }
 
 
-
---initPlayingModel : Credentials -> Game -> Playing.Model
---initPlayingModel credentials game =
---    { phase = Playing.Wait
---    , picker = initEmojiPicker
---    , game = game
---    , credentials = credentials
---    }
-
-
 initEmojiPicker =
     EmojiPicker.init
         { offsetX = 0 -- horizontal offset
@@ -220,12 +171,6 @@ initEmojiPicker =
 
 
 
---initCredentials : RoomId -> Credentials
---initCredentials roomId =
---    { roomId = roomId
---    , playerName = PlayerName ""
---    , secret = Credentials.Secret ""
---    }
 -- UPDATE
 
 
@@ -311,14 +256,6 @@ update msg model =
         ( PlayingMsg playingMsg, Playing playingModel ) ->
             Tuple.mapFirst updatePage <| mapPlayingUpdate <| Playing.update playingModel playingMsg
 
-        --( UpdateSubmission , Playing playingScreen ) ->
-        --( Submit , Playing playingScreen ) ->
-        --( ReceiveWs , Playing playingScreen ) ->
-        --( FinishTurn , Playing playingScreen ) ->
-        --( EmojiMsg , Playing playingScreen ) ->
-        --( KickPlayer , Playing playingScreen ) ->
-        --( KickPlayerConfirm , Playing playingScreen ) ->
-        --( SkipTurn , Playing playingScreen ) ->
         anyOther ->
             ( updatePage <| Error <| "Invalid Msg: " ++ Debug.toString (Debug.log "msg: " anyOther), Cmd.none )
 

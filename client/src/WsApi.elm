@@ -3,8 +3,6 @@ module WsApi exposing (..)
 import Credentials exposing (Credentials)
 import Game exposing (Game)
 import Json.Decode as D
-import Json.Decode.Pipeline as DP
-import RoomId
 
 
 type Msg
@@ -18,8 +16,6 @@ decoder : D.Decoder Msg
 decoder =
     D.oneOf
         [ D.field "game" Game.gameDecoder |> D.map GameState
-
-        --, D.field "ack" (D.succeed Ack)
         , D.field "error" D.string |> D.map Error
         , D.field "secret" D.string |> D.map (Secret << Credentials.Secret)
         , D.field "joined" createdDecoder |> D.map (\( g, s ) -> Joined g s)
@@ -35,7 +31,3 @@ createdDecoder =
     D.map2 (\a b -> ( a, b ))
         (D.field "game" Game.gameDecoder)
         (D.field "secret" D.string |> D.map Credentials.Secret)
-
-
-
---(D.field "roomId" RoomId.roomIdDecoder)
