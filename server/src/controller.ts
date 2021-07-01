@@ -8,8 +8,4 @@ export const controller = {
             player.ws.send('error You have not joined a room yet.');
         }
     }
-
-
-
 };
-
