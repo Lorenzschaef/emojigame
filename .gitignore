@@ -1,4 +1,5 @@
 server/dist
 client/elm-stuff
+client/public/dist.js
 node_modules
 .idea
