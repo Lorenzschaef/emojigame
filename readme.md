@@ -1,6 +1,6 @@
 # Emojigame
 
-This is a simple multiplayer game where you have to express a concept using only Emojis and your friends have to guess.
+This is a simple multiplayer game where you have to express a concept given by the game using only Emojis. The players take turns to guess what the emojis written by the rest of the players refer to. If that player gets it right, he receives a point and can then give another point to the person who, in his opinion, did the best job at describing the concept.
 
 I created this during the initial lockdown in spring of 2020 with the idea of having something to play with friends during online reunions.
 
@@ -16,11 +16,16 @@ There are still some bugs and parts of the code are a mess, but I was able to en
 I don't have a server set up, so if you want to play, you have to run the server yourself.
 
 1. Clone the repository.
-2. Install nodejs, npm and elm if you don't have them installed.
-3. Run `npm start` in your terminal.
-4. You can now access the game through `localhost:8999`.
-5. Use for example "ngrok" to make the game accessible through the internet.
+2. Install [nodejs and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+3. Run `npm install` to install dependencies.
+4. Run `npm start` to build the app and start the server.
+5. Visit `http://localhost:8999` in your browser.
+6. Use for example [ngrok](https://ngrok.com/) to make the game accessible through the internet.
 
 ### Credits
 
 The emoji picker was adapted from https://github.com/Holmusk/elmoji/tree/1.0.4
+
+### Phrase Sets
+
+In `server/phrasesets` there are txt-files that contain the concepts or phrases used in the game. Currently the only way to switch to a different set is by changig the code in `server/src/server.ts` and rebuilding the app. Feel free to try them and add your own.
